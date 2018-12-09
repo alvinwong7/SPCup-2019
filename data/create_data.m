@@ -14,37 +14,28 @@ speech = 0;
 % [y4, fs] = audioread('individual_motors_recordings/Motor4_50.wav'); 
 [y5, fs] = audioread('dev_static/audio/1.wav');
 
-% mkdir 
-
-PATH = 'individual_motors_recordings';
-files = dir('individual_motors_recordings/*.wav');
-for file = files
-    PATH = [PATH file];
-    csv = load(file.name);
+n = 1;
+[row col] = size(y1);
+y0 = zeros(1,length(y1));
+for n = 1:col
+    y0 = y0 + y1(:,n)';
 end
-
-% n = 1;
-% [row col] = size(y1);
-% y0 = zeros(1,length(y1));
-% for n = 1:col
-%     y0 = y0 + y1(:,n)';
-% end
-% y1 = y0(202000:length(y0));
-% for n = 1:length(y1)
-%     if abs(y1(n)) > 0.02
-%         x = y1(n:length(y1));
-%         break
-%     end
-% end
-% n = length(x);
-% while n > 1
-%     n = n - 1;
-%     if abs(x(n)) > 0.02
-%         x = x(1:n);
-%         break
-%     end
-% end
-% plot(x)
+y1 = y0(202000:length(y0));
+for n = 1:length(y1)
+    if abs(y1(n)) > 0.02
+        x = y1(n:length(y1));
+        break
+    end
+end
+n = length(x);
+while n > 1
+    n = n - 1;
+    if abs(x(n)) > 0.02
+        x = x(1:n);
+        break
+    end
+end
+plot(x)
 
 
 % subplot(2,2,1)
