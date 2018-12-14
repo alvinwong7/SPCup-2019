@@ -1,13 +1,20 @@
-% Motor data fix
+%% motorInit.m - Function to crop the individual motor recordings to
+%                consist of only the motor sound, removing any silence and
+%                initial motor start up noises
 
 close all; clear all; clc
 
+%% PATHS
+% PATH - path to current motor recordings
+% NEW_PATH - desired path of cropped motor recordings (NOTE: it will create
+% a new folder if the destination does not exist
 PATH = 'individual_motors_recordings/';
 NEW_PATH = 'individual_motors_cut/';
+
+%% MOTOR RECORDING CUT
 files = dir('individual_motors_recordings/*.wav');
+mkdir(NEW_PATH)
 load('cut.mat')
-
-
 threshold = 0.008;
 for k = 1:length(files)
     PATH_FILE = [PATH files(k).name];
