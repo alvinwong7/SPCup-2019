@@ -2,6 +2,7 @@
 
 function noise = mixMotorNoise(x, speed)
 % I'll optimise this later
+lowest = 1000000000000000;
 for k = 1:4
     PATH_AUDIO = ['individual_motors_cut/Motor' num2str(k) '_' num2str(speed) '.wav'];
     [y, fs] = audioread(PATH_AUDIO);

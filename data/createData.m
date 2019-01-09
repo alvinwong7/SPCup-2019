@@ -65,6 +65,7 @@ if speech
                 % Largest delay shift
                 maxDelay = max(delaySampled);
                 minDelay = min(delaySampled);
+                clearvars delayedY
                 for k = 1:8
                     Y_temp = [zeros(delaySampled(k),1); yResampled];
                     delayedY(:,k) = Y_temp(maxDelay:length(yResampled)+minDelay);
