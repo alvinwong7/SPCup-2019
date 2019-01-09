@@ -2,4 +2,3 @@
 *.fig
 *.asv
 *.mat
-!data/cut.mat

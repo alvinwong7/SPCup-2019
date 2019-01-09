@@ -10,13 +10,13 @@ close all; clear all; clc
     % specified SNR values (e.g. [5 8] will only create +5, and +8 SNRs
 
 speech = 1;
-snrRange = 0;
+snrRange = 1;
 
 %% SETTINGS
 % speakerNum specifies the amount of speakers to simulate
 % filesPerSpeaker specifies the amount of files to simulate per speaker
 % speakerNum and filesPerSpeaker maximum is 10
-speakerNum = 10;
+speakerNum = 1;
 filesPerSpeaker = 2;
 snrs = [-10 5];
 motorSpeed = 50;
