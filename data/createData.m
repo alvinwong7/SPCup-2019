@@ -13,8 +13,13 @@ speech = 1;
 snrRange = 0;
 
 %% SETTINGS
+% speakerNum specifies the amount of speakers to simulate
+% filesPerSpeaker specifies the amount of files to simulate per speaker
+% speakerNum and filesPerSpeaker maximum is 10
+speakerNum = 10;
+filesPerSpeaker = 2;
 snrs = [-10 5];
-motorSpeed = 40;
+motorSpeed = 50;
 
 %% CHECK SETTINGS
 if snrRange == 1 && length(snrs) == 2
@@ -25,12 +30,20 @@ if snrRange == 1 && length(snrs) == 2
         i = i + 1;
     end
 elseif snrRange == 1 && length(snrs) ~= 2
-    msg = 'Error (line 13/16): snrRange is TRUE and requires only TWO values in snrs setting';
+    msg = 'Error (line 13/21): snrRange is TRUE and requires only TWO values in snrs setting';
     error(msg)
 end
 validMotorSpeeds = [50 60 70 80 90];
 if ~ismember(motorSpeed, validMotorSpeeds)
-    msg = 'Error (line 17): motorSpeed is not valid';
+    msg = 'Error (line 22): motorSpeed is invalid, must be 50, 60, 70, 80 or 90';
+    error(msg)
+end
+if speech && (speakerNum < 1 || speakerNum > 10)
+    msg = 'Error (line 19): speakerNum value is invalid, must be 1-10';
+    error(msg)
+end
+if speech && (filesPerSpeaker < 1 || filesPerSpeaker > 10)
+    msg = 'Error (line 20): filesPerSpeaker value is invalid, must be 1-10';
     error(msg)
 end
 
@@ -66,17 +79,29 @@ if speech
     for i = 1:length(snrs)
         PATH_FILE = [PATH_NEW_DATA int2str(snrs(i)) '/'];
         mkdir(PATH_FILE)
-        for spkrNum = 1:10
+        PATH_SOURCE_DATA = [PATH_FILE 'sourceData.mat'];
+        if exist('sourceData', 'var') == 1
+            clearvars sourceData
+        end
+        if isfile(PATH_SOURCE_DATA)
+            load(PATH_SOURCE_DATA)
+        end
+        for spkr = 1:speakerNum
             fileNum = 1;
-            PATH_SPEAKER = [PATH_SOURCE 'Speaker' int2str(spkrNum) '/'];
+            PATH_SPEAKER = [PATH_SOURCE 'Speaker' int2str(spkr) '/'];
             speechFiles = dir([PATH_SPEAKER '*.WAV']);
-            for j = 1:length(speechFiles)
+            for j = 1:filesPerSpeaker
                 PATH_AUDIO = [PATH_SPEAKER speechFiles(j).name];
                 [y, fs] = audioread(PATH_AUDIO);
                 % distance in cm
                 theta = -180 + (179 + 180).*rand(1,1);
                 phi = -45 + 45.*rand(1,1);
                 d = 100 + (1000-100).*rand(1,1);
+                if exist('sourceData', 'var') == 1
+                    sourceData = [sourceData; theta phi d];
+                else
+                    sourceData = [theta phi d];
+                end
                 cart = [d*cos(theta*pi/180)*cos(phi*pi/180) d*sin(theta*pi/180)*cos(phi*pi/180) d*sin(phi*pi/180)];
                 for k = 1:8
                     delay(k) = norm(cart - micPos(k,:))/c;
@@ -105,6 +130,7 @@ if speech
                 end
             end
         end
+        save(PATH_SOURCE_DATA, 'sourceData')
     end
 else
     whiteNoiseFiles = dir('dev_static/audio/*.wav');
