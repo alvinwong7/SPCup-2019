@@ -5,13 +5,34 @@ close all; clear all; clc
 %% TOGGLES
 % Toggles
 % speech - toggles between speech (1) and white noise (0)
-% vary - toggles between varying snr
+% vary - toggles between varying snr between 2 numbers (1)
+    % (e.g. [5 8] will create +5, +6, +7, and +8 SNRs) and only creating
+    % specified SNR values (e.g. [5 8] will only create +5, and +8 SNRs
+
 speech = 1;
 snrRange = 0;
 
 %% SETTINGS
-snrs = [-10];
-motorSpeed = 50;
+snrs = [-10 5];
+motorSpeed = 40;
+
+%% CHECK SETTINGS
+if snrRange == 1 && length(snrs) == 2
+    snrs = sort(snrs);
+    i = 2;
+    for snr = snrs(1)+1:snrs(2)
+        snrs(i) = snr;
+        i = i + 1;
+    end
+elseif snrRange == 1 && length(snrs) ~= 2
+    msg = 'Error (line 13/16): snrRange is TRUE and requires only TWO values in snrs setting';
+    error(msg)
+end
+validMotorSpeeds = [50 60 70 80 90];
+if ~ismember(motorSpeed, validMotorSpeeds)
+    msg = 'Error (line 17): motorSpeed is not valid';
+    error(msg)
+end
 
 %% PATHS
 PATH = 'new_data/';
@@ -42,20 +63,20 @@ if speech
               0.0615  -0.0420  -0.0410;  % mic 7
 	          0.0615   0.0420   0.0410]; % mic 8
     delay = zeros(1,8);
-    for spkrNum = 1:10
-        PATH_SPEAKER = [PATH_SOURCE 'Speaker' int2str(spkrNum) '/'];
-        speechFiles = dir([PATH_SPEAKER '*.WAV']);
-        for i = 1:length(snrs)
+    for i = 1:length(snrs)
+        PATH_FILE = [PATH_NEW_DATA int2str(snrs(i)) '/'];
+        mkdir(PATH_FILE)
+        for spkrNum = 1:10
             fileNum = 1;
-            PATH_FILE = [PATH_NEW_DATA int2str(snrs(i)) '/'];
-            mkdir(PATH_FILE)
+            PATH_SPEAKER = [PATH_SOURCE 'Speaker' int2str(spkrNum) '/'];
+            speechFiles = dir([PATH_SPEAKER '*.WAV']);
             for j = 1:length(speechFiles)
                 PATH_AUDIO = [PATH_SPEAKER speechFiles(j).name];
                 [y, fs] = audioread(PATH_AUDIO);
                 % distance in cm
-                theta = 40;
-                phi = -45;
-                d = 1000;
+                theta = -180 + (179 + 180).*rand(1,1);
+                phi = -45 + 45.*rand(1,1);
+                d = 100 + (1000-100).*rand(1,1);
                 cart = [d*cos(theta*pi/180)*cos(phi*pi/180) d*sin(theta*pi/180)*cos(phi*pi/180) d*sin(phi*pi/180)];
                 for k = 1:8
                     delay(k) = norm(cart - micPos(k,:))/c;
