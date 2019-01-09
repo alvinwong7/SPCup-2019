@@ -9,5 +9,7 @@
  * flight_task: 36 8-channel audio recordings at 44.1kHz lasting precisely 4 seconds each are provided in the form of wav files. The sources are either a loudspeaker emitting white noise (broadband) or speech. All recordings were made during flight with the 8-microphone array attached to a Mikrocoptor UAV. The flights were performed in a large room with moderate reverberation level.
  
  ## Creating Test Data
-  * Run motorInit.m first.
+  * Download speech.rar from https://drive.google.com/open?id=1AnYhh--sVDIuCbP62wvKiuLobyE5XFa2, and extract it in the dev_static folder. The folder hieararchy should look like dev_static --> speech --> Speaker1-10.
+  * Make sure you have the individual_motors_recordings folder in the data/ folder.
+  * Run motorInit.m, it should create a new folder called individual_motors_cut.
   * Run createData.m with desired settings.
