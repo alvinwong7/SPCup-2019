@@ -10,7 +10,7 @@ close all; clear all; clc
     % specified SNR values (e.g. [5 8] will only create +5, and +8 SNRs
 
 speech = 1;
-snrRange = 1;
+snrRange = 0;
 
 %% SETTINGS
 % speakerNum specifies the amount of speakers to simulate
@@ -18,7 +18,7 @@ snrRange = 1;
 % speakerNum and filesPerSpeaker maximum is 10
 speakerNum = 1;
 filesPerSpeaker = 2;
-snrs = [-10 5];
+snrs = [5];
 motorSpeed = 50;
 
 %% CHECK SETTINGS
@@ -116,7 +116,7 @@ if speech
                     Y_temp = [zeros(delaySampled(k),1); yResampled];
                     delayedY(:,k) = Y_temp(maxDelay:length(yResampled)+minDelay);
                 end
-                y = resample(delayedY,1,16);
+                y = resample(delayedY,441,2560);
                 noise = mixMotorNoise(y,motorSpeed);
                 noise = (noise/norm(rms(noise)))*(norm(rms(y))/10.0^(0.05*snrs(i)));
                 mixed = y + noise;
@@ -124,7 +124,7 @@ if speech
                     fileName = [PATH_FILE int2str(fileNum) '.wav'];
                     fileNum = fileNum + 1;
                     if ~isfile(fileName)
-                        audiowrite(fileName,mixed,fs);
+                        audiowrite(fileName,mixed,44100);
                     break
                     end
                 end
