@@ -18,7 +18,7 @@ clear
 clc
 
 %% PATHs
-DATA = 'flight'; % static or flight
+DATA = 'static'; % static or flight
 PATH_DATA = ['../data/dev_' DATA '/'];
 
 PATH_AUDIO = [PATH_DATA 'audio/'];
