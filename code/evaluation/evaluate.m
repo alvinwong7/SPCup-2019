@@ -4,6 +4,11 @@ function evaluate(method,args)
 
 % Fetch folders from speech
 folders = dir(fullfile('..','data','new_data','speech'));
+if numel(folders) == 0
+    error(['No folders found in dsp-cup/data/new_data/speech. If these' ...
+        ' files do not exist, generate them with createData.m found in'...
+        ' the dsp-cup/data directory.']);
+end
 for i=1:numel(folders)
     if folders(i).name == '.'
             row2clr = i;
