@@ -98,9 +98,9 @@ if speech
                 phi = -45 + 45.*rand(1,1);
                 d = 100 + (1000-100).*rand(1,1);
                 if exist('sourceData', 'var') == 1
-                    sourceData = [sourceData; theta phi d];
+                    sourceData = [sourceData; theta phi];
                 else
-                    sourceData = [theta phi d];
+                    sourceData = [theta phi];
                 end
                 cart = [d*cos(theta*pi/180)*cos(phi*pi/180) d*sin(theta*pi/180)*cos(phi*pi/180) d*sin(phi*pi/180)];
                 for k = 1:8

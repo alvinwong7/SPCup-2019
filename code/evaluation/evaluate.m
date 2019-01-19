@@ -1,6 +1,6 @@
 %% evaluate.m -- Master function to evaluate methods
 
-function evaluate(method)
+function evaluate(method,varargin)
 
 clear variables;
 close all;
@@ -30,7 +30,11 @@ for i=1:numel(folders)
     for k = 1:numel(files)
         [data,Fs] = audioread(fullfile(files(k).folder,files(k).name));
         % Insert desired function here
-        DOA(i,k,:) = method(data,Fs,varargin);
+        if nargin == 0
+            DOA(i,k,:) = method(data,Fs);
+        else
+            DOA(i,k,:) = method(data,Fs,varargin);
+        end
         disp(['Folder [',num2str(i),'/',num2str(numel(folders)),']']);
         disp(['File [',num2str(k),'/',num2str(numel(files)),']']);
     end
