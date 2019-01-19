@@ -1,7 +1,7 @@
-function [az, el] = baseline(filePath)
+function [az, el] = baseline(wavforms,fs_wav,params)
 %% PATHs
     % add MBSSLocate toolbox to the current matlab session
-    addpath(genpath('./MBSSLocate/'));
+    addpath(fullfile('..','..','..','baseline','MBSSLocate'));
 
     %% FLAGs
     % if 'development' is 1, load the ground-truth files and
@@ -87,9 +87,6 @@ function [az, el] = baseline(filePath)
     azPred = zeros(1, T);
     elPred = zeros(1, T);
 
-    % Load audio filename    
-    AUDIO_PATH = [PATH fileName(i).name];
-    [wavforms,fs_wav] = audioread(AUDIO_PATH);
     % resampling to the given sampling frequency
     [p,q] = rat(fs/fs_wav,0.0001);
     wavforms = resample(wavforms,p,q);
