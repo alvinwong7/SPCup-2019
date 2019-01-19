@@ -1,7 +1,7 @@
-function [az, el] = baseline(wavforms,fs_wav,params)
+function [azPred, elPred] = baseline(wavforms,fs_wav,params)
 %% PATHs
     % add MBSSLocate toolbox to the current matlab session
-    addpath(fullfile('..','..','..','baseline','MBSSLocate'));
+    addpath(fullfile('..','baseline','MBSSLocate'));
 
     %% FLAGs
     % if 'development' is 1, load the ground-truth files and
