@@ -65,6 +65,6 @@ for d = 1:length(D)
     end
 end
 
-save('model.mat','model','theta','phi','D');
+save('methods/RTOA_model/model.mat','model','theta','phi','D');
 
 end

@@ -16,9 +16,9 @@ snrRange = 0;
 % speakerNum specifies the amount of speakers to simulate
 % filesPerSpeaker specifies the amount of files to simulate per speaker
 % speakerNum and filesPerSpeaker maximum is 10
-speakerNum = 1;
+speakerNum = 10;
 filesPerSpeaker = 2;
-snrs = [5];
+snrs = [50];
 motorSpeed = 50;
 
 %% CHECK SETTINGS
@@ -50,7 +50,7 @@ end
 %% PATHS
 PATH = 'new_data/';
 if speech 
-    PATH_SOURCE = 'dev_static/speech/';
+    PATH_SOURCE = 'clean_speech_mono/speech/';
     PATH_NEW_DATA = [PATH 'speech/'];
 else
     PATH_SOURCE = 'dev_static/audio/';

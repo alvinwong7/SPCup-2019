@@ -2,12 +2,12 @@
 % Estimate DOA using correlation for delay estimation, and model fitting
 % method
 
-function DOA = estDOAmodel(data,Fs,recalcModel)
+function DOA = estDOAmodel(data,Fs,params)
 
 % Recompute model if desired or if it doesn't exist
-if recalcModel == 1
+if params{1} == 1
     getModel([-179 180 360],[-90 90 181],[0.1 5 50]);
-elseif ~isfile('model.mat')
+elseif ~isfile('methods/RTOA_model/model.mat')
     getModel([],[],[]);
 end
 
@@ -27,8 +27,8 @@ end
 p_metric = 2;
 SSE = sum((Fs*model-RTOA).^p_metric).^(1/p_metric);
 [~,I] = min(SSE(:));
-[~,t_min,p_min,d_min] = ind2sub(size(SSE),I);
-DOA = [theta(t_min),phi(p_min),D(d_min)];
+[~,t_min,p_min,~] = ind2sub(size(SSE),I);
+DOA = [theta(t_min),phi(p_min)];
 
 end
 
