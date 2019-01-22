@@ -9,7 +9,9 @@ close all; clear all; clc
     % (e.g. [5 8] will create +5, +6, +7, and +8 SNRs) and only creating
     % specified SNR values (e.g. [5 8] will only create +5, and +8 SNRs
 
-speech = 1;
+speech = 0;
+broadband_simulated = 1;
+broadband_real = 0;
 snrRange = 0;
 
 %% SETTINGS
@@ -18,6 +20,19 @@ snrRange = 0;
 % speakerNum and filesPerSpeaker maximum is 10
 speakerNum = 10;
 filesPerSpeaker = 2;
+
+% fileNum affects the number of static white noise source files to use as a
+% base for simulation. max value is 3.
+% filesPerSource specifies the number of files to generate per base file.
+% max value is 10.
+brdbndNum = 3;
+filesPerSource = 5;
+
+% snrs is a list of the SNR's you wish to generate the files at.
+% alternatively use snrrange = 1 (see above) to generate very SNR between 
+% 2 given values.
+% motorSpeed is the speed of the motors used to generate the simulated
+% files.
 snrs = [50];
 motorSpeed = 50;
 
@@ -30,40 +45,55 @@ if snrRange == 1 && length(snrs) == 2
         i = i + 1;
     end
 elseif snrRange == 1 && length(snrs) ~= 2
-    msg = 'Error (line 13/21): snrRange is TRUE and requires only TWO values in snrs setting';
+    msg = 'Error (line 15/36): snrRange is TRUE and requires only TWO values in snrs setting';
     error(msg)
 end
 validMotorSpeeds = [50 60 70 80 90];
 if ~ismember(motorSpeed, validMotorSpeeds)
-    msg = 'Error (line 22): motorSpeed is invalid, must be 50, 60, 70, 80 or 90';
+    msg = 'Error (line 37): motorSpeed is invalid, must be 50, 60, 70, 80 or 90';
     error(msg)
 end
 if speech && (speakerNum < 1 || speakerNum > 10)
-    msg = 'Error (line 19): speakerNum value is invalid, must be 1-10';
+    msg = 'Error (line 21): speakerNum value is invalid, must be 1-10';
     error(msg)
 end
 if speech && (filesPerSpeaker < 1 || filesPerSpeaker > 10)
-    msg = 'Error (line 20): filesPerSpeaker value is invalid, must be 1-10';
+    msg = 'Error (line 22): filesPerSpeaker value is invalid, must be 1-10';
+    error(msg)
+end
+if broadband_simulated && (brdbndNum < 1 || brdbndNum > 3)
+    msg = 'Error (line 28): fileNum value is invalid, must be 1-3';
+    error(msg)
+end
+if broadband_simulated && (filesPerSource < 1 || filesPerSource > 8)
+    msg = 'Error (line 29): filesPerSource value is invalid, must be 1-8';
     error(msg)
 end
 
-%% PATHS
+%% PATHS (moved most of this into the if block further down)
 PATH = 'new_data/';
+% if speech 
+%     PATH_SOURCE = 'clean_speech_mono/speech/';
+%     PATH_NEW_DATA = [PATH 'speech/'];
+% elseif broadband_simulated
+%     PATH_SOURCE = 'dev_static/audio';
+%     PATH_NEW_DATA = [PATH 'broadband_simulated/'];
+% else
+%     PATH_SOURCE = 'dev_static/audio/';
+%     PATH_NEW_DATA = [PATH 'broadband_real/'];
+% end
+
+% %% FOLDER CREATION (moved into later section)
+% mkdir(PATH)
+% mkdir(PATH_NEW_DATA)
+
+%% Generate files
+
 if speech 
     PATH_SOURCE = 'clean_speech_mono/speech/';
     PATH_NEW_DATA = [PATH 'speech/'];
-else
-    PATH_SOURCE = 'dev_static/audio/';
-    PATH_NEW_DATA = [PATH 'broadband/'];
-end
-
-%% FOLDER CREATION
-mkdir(PATH)
-mkdir(PATH_NEW_DATA)
-
-%% 
-
-if speech
+    mkdir(PATH)
+    mkdir(PATH_NEW_DATA)
     c = 34300;
     % The (X,Y,Z) positions of the 8 microphones, in meters, 
     % with respect to the center of the array are given below:
@@ -86,9 +116,9 @@ if speech
         if isfile(PATH_SOURCE_DATA)
             load(PATH_SOURCE_DATA)
         end
-        for spkr = 1:speakerNum
+        for file = 1:speakerNum
             fileNum = 1;
-            PATH_SPEAKER = [PATH_SOURCE 'Speaker' int2str(spkr) '/'];
+            PATH_SPEAKER = [PATH_SOURCE 'Speaker' int2str(file) '/'];
             speechFiles = dir([PATH_SPEAKER '*.WAV']);
             for j = 1:filesPerSpeaker
                 PATH_AUDIO = [PATH_SPEAKER speechFiles(j).name];
@@ -132,7 +162,87 @@ if speech
         end
         save(PATH_SOURCE_DATA, 'sourceData')
     end
-else
+end
+
+if broadband_simulated
+    PATH_SOURCE = 'dev_static/audio';
+    PATH_NEW_DATA = [PATH 'broadband_simulated/'];
+    mkdir(PATH);
+    mkdir(PATH_NEW_DATA);
+    c = 34300;
+    % The (X,Y,Z) positions of the 8 microphones, in meters, 
+    % with respect to the center of the array are given below:
+    micPos = 100*[0.0420   0.0615  -0.0410;  % mic 1
+             -0.0420   0.0615   0.0410;  % mic 2
+             -0.0615   0.0420  -0.0410;  % mic 3
+             -0.0615  -0.0420   0.0410;  % mic 4
+             -0.0420  -0.0615  -0.0410;  % mic 5
+              0.0420  -0.0615   0.0410;  % mic 6
+              0.0615  -0.0420  -0.0410;  % mic 7
+	          0.0615   0.0420   0.0410]; % mic 8
+    delay = zeros(1,8);
+    for i = 1:length(snrs)
+        PATH_FILE = [PATH_NEW_DATA int2str(snrs(i)) '/'];
+        mkdir(PATH_FILE)
+        PATH_SOURCE_DATA = [PATH_FILE 'sourceData.mat'];
+        if exist('sourceData', 'var') == 1
+            clearvars sourceData
+        end
+        if isfile(PATH_SOURCE_DATA)
+            load(PATH_SOURCE_DATA)
+        end
+        for file = 1:brdbndNum
+            fileNum = 1;
+            PATH_AUDIO = [PATH_SOURCE '/' int2str(file) '.wav'];
+            [source, fs] = audioread(PATH_AUDIO);
+            for j = 1:filesPerSource
+                y = source(:,j);
+                % distance in cm
+                theta = -180 + (179 + 180).*rand(1,1);
+                phi = -45 + 45.*rand(1,1);
+                d = 100 + (1000-100).*rand(1,1);
+                if exist('sourceData', 'var') == 1
+                    sourceData = [sourceData; theta phi];
+                else
+                    sourceData = [theta phi];
+                end
+                cart = [d*cos(theta*pi/180)*cos(phi*pi/180) d*sin(theta*pi/180)*cos(phi*pi/180) d*sin(phi*pi/180)];
+                for k = 1:8
+                    delay(k) = norm(cart - micPos(k,:))/c;
+                end
+                delaySampled = round(delay*16*fs);
+                yResampled = resample(y,16,1);
+                % Largest delay shift
+                maxDelay = max(delaySampled);
+                minDelay = min(delaySampled);
+                clearvars delayedY
+                for k = 1:8
+                    Y_temp = [zeros(delaySampled(k),1); yResampled];
+                    delayedY(:,k) = Y_temp(maxDelay:length(yResampled)+minDelay);
+                end
+                y = resample(delayedY,1,16);
+                noise = mixMotorNoise(y,motorSpeed);
+                noise = (noise/norm(rms(noise)))*(norm(rms(y))/10.0^(0.05*snrs(i)));
+                mixed = y + noise;
+                while 1
+                    fileName = [PATH_FILE int2str(fileNum) '.wav'];
+                    fileNum = fileNum + 1;
+                    if ~isfile(fileName)
+                        audiowrite(fileName,mixed,44100);
+                    break
+                    end
+                end
+            end
+        end
+        save(PATH_SOURCE_DATA, 'sourceData')
+    end
+end
+
+if broadband_real
+    PATH_SOURCE = 'dev_static/audio/';
+    PATH_NEW_DATA = [PATH 'broadband_real/'];
+    mkdir(PATH);
+    mkdir(PATH_NEW_DATA);
     whiteNoiseFiles = dir('dev_static/audio/*.wav');
     for i = 1:length(snrs)
         fileNum = 1;
