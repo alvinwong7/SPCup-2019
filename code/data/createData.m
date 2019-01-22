@@ -4,15 +4,20 @@ close all; clear all; clc
 
 %% TOGGLES
 % Toggles
-% speech - toggles between speech (1) and white noise (0)
-% vary - toggles between varying snr between 2 numbers (1)
-    % (e.g. [5 8] will create +5, +6, +7, and +8 SNRs) and only creating
-    % specified SNR values (e.g. [5 8] will only create +5, and +8 SNRs
-
+% speech - toggles simulated source speech creation
+% broadband - toggles broadband data creation
+% simulated_source - toggles between simulated source creation using
+    % broadband data (1) and non-simulated source creation (0)
+% snrRange - toggles between varying snr between 2 numbers (1)
+    % (e.g. [5 8] will create SNRs 5 to 8 by some increment specified by
+    % snrIncrement) and only creating specified SNR values (0) (e.g. [5 8]
+    % will only create +5, and +8 SNRs)
+% snrIncrement - 
 speech = 0;
-broadband_simulated = 1;
-broadband_real = 0;
-snrRange = 0;
+broadband = 1;
+simulate_source = 1;
+snrRange = 1;
+snrIncrement = 3;
 
 %% SETTINGS
 % speakerNum specifies the amount of speakers to simulate
@@ -21,26 +26,30 @@ snrRange = 0;
 speakerNum = 10;
 filesPerSpeaker = 2;
 
-% fileNum affects the number of static white noise source files to use as a
+% brdbndNum affects the number of static white noise source files to use as a
 % base for simulation. max value is 3.
 % filesPerSource specifies the number of files to generate per base file.
 % max value is 10.
-brdbndNum = 3;
+brdbndNum = 1;
 filesPerSource = 5;
 
 % snrs is a list of the SNR's you wish to generate the files at.
-% alternatively use snrrange = 1 (see above) to generate very SNR between 
-% 2 given values.
+% alternatively use snrrange = 1 (see above) to generate vary SNR between 
+% 2 given values by some increment defined by snrIncrement
 % motorSpeed is the speed of the motors used to generate the simulated
 % files.
-snrs = [50];
+snrs = [4 8];
 motorSpeed = 50;
 
 %% CHECK SETTINGS
 if snrRange == 1 && length(snrs) == 2
+    if snrIncrement == 0
+        msg = 'Error (line 20): snrRange is TRUE but snrIncrement is ZERO, must be greater than ONE';
+        error(msg)
+    end
     snrs = sort(snrs);
-    i = 2;
-    for snr = snrs(1)+1:snrs(2)
+    i = 1;
+    for snr = snrs(1):snrIncrement:snrs(2)
         snrs(i) = snr;
         i = i + 1;
     end
@@ -50,42 +59,29 @@ elseif snrRange == 1 && length(snrs) ~= 2
 end
 validMotorSpeeds = [50 60 70 80 90];
 if ~ismember(motorSpeed, validMotorSpeeds)
-    msg = 'Error (line 37): motorSpeed is invalid, must be 50, 60, 70, 80 or 90';
+    msg = 'Error (line 42): motorSpeed is invalid, must be 50, 60, 70, 80 or 90';
     error(msg)
 end
 if speech && (speakerNum < 1 || speakerNum > 10)
-    msg = 'Error (line 21): speakerNum value is invalid, must be 1-10';
+    msg = 'Error (line 26): speakerNum value is invalid, must be 1-10';
     error(msg)
 end
 if speech && (filesPerSpeaker < 1 || filesPerSpeaker > 10)
-    msg = 'Error (line 22): filesPerSpeaker value is invalid, must be 1-10';
+    msg = 'Error (line 27): filesPerSpeaker value is invalid, must be 1-10';
     error(msg)
 end
-if broadband_simulated && (brdbndNum < 1 || brdbndNum > 3)
-    msg = 'Error (line 28): fileNum value is invalid, must be 1-3';
+if broadband && simulate_source && (brdbndNum < 1 || brdbndNum > 3)
+    msg = 'Error (line 33): brdbndNum value is invalid, must be 1-3';
     error(msg)
 end
-if broadband_simulated && (filesPerSource < 1 || filesPerSource > 8)
-    msg = 'Error (line 29): filesPerSource value is invalid, must be 1-8';
+if broadband && simulate_source && (filesPerSource < 1 || filesPerSource > 8)
+    msg = 'Error (line 34): filesPerSource value is invalid, must be 1-8';
     error(msg)
 end
 
-%% PATHS (moved most of this into the if block further down)
+%% PATHS
+% Path to save new data
 PATH = 'new_data/';
-% if speech 
-%     PATH_SOURCE = 'clean_speech_mono/speech/';
-%     PATH_NEW_DATA = [PATH 'speech/'];
-% elseif broadband_simulated
-%     PATH_SOURCE = 'dev_static/audio';
-%     PATH_NEW_DATA = [PATH 'broadband_simulated/'];
-% else
-%     PATH_SOURCE = 'dev_static/audio/';
-%     PATH_NEW_DATA = [PATH 'broadband_real/'];
-% end
-
-% %% FOLDER CREATION (moved into later section)
-% mkdir(PATH)
-% mkdir(PATH_NEW_DATA)
 
 %% Generate files
 
@@ -164,7 +160,7 @@ if speech
     end
 end
 
-if broadband_simulated
+if broadband && simulate_source
     PATH_SOURCE = 'dev_static/audio';
     PATH_NEW_DATA = [PATH 'broadband_simulated/'];
     mkdir(PATH);
@@ -238,7 +234,7 @@ if broadband_simulated
     end
 end
 
-if broadband_real
+if broadband && simulate_source == 0
     PATH_SOURCE = 'dev_static/audio/';
     PATH_NEW_DATA = [PATH 'broadband_real/'];
     mkdir(PATH);
