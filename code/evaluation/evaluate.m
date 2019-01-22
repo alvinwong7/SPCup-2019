@@ -1,9 +1,14 @@
 %% evaluate.m -- Master function to evaluate methods
+% Inputs:
+% - method    - Function handle for the method being tested
+% - args      - Cell array containing any arguments the method needs
+% - testType  - The type of files to test on. 
+%               Current options: 'broadband_simulated' or 'speech'
 
-function evaluate(method,args)
+function evaluate(method,args,testType)
 
 % Fetch folders from speech
-folders = dir(fullfile('..','data','new_data','broadband_simulated'));
+folders = dir(fullfile('..','data','new_data',testType));
 if numel(folders) == 0
     error(['No folders found in dsp-cup/data/new_data/speech. If these' ...
         ' files do not exist, generate them with createData.m found in'...

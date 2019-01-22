@@ -19,4 +19,4 @@ method = @estDOAmodel;
 args = {0};
 
 addpath(genpath(pwd));
-evaluate(method,args);
+evaluate(method,args,'speech');
