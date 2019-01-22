@@ -3,7 +3,7 @@
 function evaluate(method,args)
 
 % Fetch folders from speech
-folders = dir(fullfile('..','data','new_data','speech'));
+folders = dir(fullfile('..','data','new_data','broadband_simulated'));
 if numel(folders) == 0
     error(['No folders found in dsp-cup/data/new_data/speech. If these' ...
         ' files do not exist, generate them with createData.m found in'...
@@ -30,7 +30,8 @@ for i=1:numel(folders)
     files = dir(fullfile(folders(i).folder,folders(i).name,'*.wav'));
     load(fullfile(folders(i).folder,folders(i).name,'sourceData.mat'));
     for k = 1:numel(files)
-        [data,Fs] = audioread(fullfile(files(k).folder,files(k).name));
+        fileName = [int2str(k) '.wav'];
+        [data,Fs] = audioread(fullfile(files(k).folder,fileName));
         DOA(i,k,:) = method(data,Fs,args);
         disp(['Folder [',num2str(i),'/',num2str(numel(folders)),']']);
         disp(['File [',num2str(k),'/',num2str(numel(files)),']']);
