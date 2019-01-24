@@ -1,4 +1,4 @@
-function [azPred, elPred] = baseline(wavforms,fs_wav,params)
+function DOA = baseline(wavforms,fs_wav,params)
 %% PATHs
     % add MBSSLocate toolbox to the current matlab session
     addpath(fullfile('..','baseline','MBSSLocate'));
@@ -121,6 +121,8 @@ function [azPred, elPred] = baseline(wavforms,fs_wav,params)
         end
 
     end
+    
+    DOA = [azPred, elPred];
 
     fprintf('\n')
 end
