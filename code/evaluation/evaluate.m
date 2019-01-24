@@ -77,7 +77,8 @@ subplot(2,1,2);
 plot(SNR,elevation_acc,'-x','lineWidth',2);
 title('Elevation Accuracy vs SNR');
 
-results_file = [func2str(method) 'Results.mat'];
+
+results_file = [func2str(method) '_' testType '_results.mat'];
 save(results_file,'SNR','error_azimuth','error_elevation','azimuth_acc', ...
     'elevation_acc', 'correct_azimuth','correct_elevation');
 
