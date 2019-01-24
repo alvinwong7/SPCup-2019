@@ -15,8 +15,8 @@ clear variables;
 close all;
 
 % Set method equal to the handle of the function you wish to evaluate
-method = @estDOAmodel;
-args = {0};
+method = @baseline;
+args = {};
 
-addpath(genpath(pwd));
-evaluate(method,args,'speech');
+addpath(genpath(fileparts(pwd)));
+evaluate(method,args,'broadband_simulated');

@@ -13,11 +13,11 @@ close all; clear all; clc
     % snrIncrement) and only creating specified SNR values (0) (e.g. [5 8]
     % will only create +5, and +8 SNRs)
 % snrIncrement - 
-speech = 0;
+speech = 1;
 broadband = 1;
 simulate_source = 1;
 snrRange = 1;
-snrIncrement = 3;
+snrIncrement = 4;
 
 %% SETTINGS
 % speakerNum specifies the amount of speakers to simulate
@@ -30,7 +30,7 @@ filesPerSpeaker = 2;
 % base for simulation. max value is 3.
 % filesPerSource specifies the number of files to generate per base file.
 % max value is 10.
-brdbndNum = 1;
+brdbndNum = 3;
 filesPerSource = 5;
 
 % snrs is a list of the SNR's you wish to generate the files at.
@@ -38,7 +38,7 @@ filesPerSource = 5;
 % 2 given values by some increment defined by snrIncrement
 % motorSpeed is the speed of the motors used to generate the simulated
 % files.
-snrs = [4 8];
+snrs = [-25 15];
 motorSpeed = 50;
 
 %% CHECK SETTINGS
@@ -146,6 +146,7 @@ if speech
                 noise = mixMotorNoise(y,motorSpeed);
                 noise = (noise/norm(rms(noise)))*(norm(rms(y))/10.0^(0.05*snrs(i)));
                 mixed = y + noise;
+                mixed = mixed/max(max(abs(mixed)));
                 while 1
                     fileName = [PATH_FILE int2str(fileNum) '.wav'];
                     fileNum = fileNum + 1;
@@ -220,6 +221,7 @@ if broadband && simulate_source
                 noise = mixMotorNoise(y,motorSpeed);
                 noise = (noise/norm(rms(noise)))*(norm(rms(y))/10.0^(0.05*snrs(i)));
                 mixed = y + noise;
+                mixed = mixed/max(max(abs(mixed)));
                 while 1
                     fileName = [PATH_FILE int2str(fileNum) '.wav'];
                     fileNum = fileNum + 1;

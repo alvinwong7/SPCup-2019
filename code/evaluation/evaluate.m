@@ -10,7 +10,7 @@ function evaluate(method,args,testType)
 % Fetch folders from speech
 folders = dir(fullfile('..','data','new_data',testType));
 if numel(folders) == 0
-    error(['No folders found in dsp-cup/data/new_data/speech. If these' ...
+    error(['No folders found in dsp-cup/data/new_data/testType. If these' ...
         ' files do not exist, generate them with createData.m found in'...
         ' the dsp-cup/data directory.']);
 end
@@ -47,6 +47,13 @@ for i=1:numel(folders)
     error_elevation(i) = mean((sourceData(:,2) - DOA(i,:,2)').^2);
 end
 
+[SNR,order] = sort(SNR);
+error_azimuth = error_azimuth(order);
+error_elevation = error_elevation(order);
+correct_azimuth = correct_azimuth(order,:);
+correct_elevation = correct_elevation(order,:);
+azimuth_acc = mean(correct_azimuth,2);
+elevation_acc = mean(correct_elevation,2);
 total_correct = correct_azimuth & correct_elevation;
 
 score = sum(total_correct(:));
@@ -64,11 +71,15 @@ title('Elevation MSE vs SNR');
 figure;
 title('Accuracy vs SNR');
 subplot(2,1,1);
-plot(SNR,mean(correct_azimuth,2),'-x','lineWidth',2);
+plot(SNR,azimuth_acc,'-x','lineWidth',2);
 title('Azimuth Accuracy vs SNR');
 subplot(2,1,2);
-plot(SNR,mean(correct_elevation,2),'-x','lineWidth',2);
+plot(SNR,elevation_acc,'-x','lineWidth',2);
 title('Elevation Accuracy vs SNR');
+
+results_file = [func2str(method) 'Results.mat'];
+save(results_file,'SNR','error_azimuth','error_elevation','azimuth_acc', ...
+    'elevation_acc', 'correct_azimuth','correct_elevation');
 
 end
 
