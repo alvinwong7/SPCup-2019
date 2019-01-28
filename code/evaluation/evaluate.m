@@ -37,7 +37,7 @@ for i=1:numel(folders)
     for k = 1:numel(files)
         fileName = [int2str(k) '.wav'];
         [data,Fs] = audioread(fullfile(files(k).folder,fileName));
-        DOA(i,k,:) = method(data,Fs,args);
+        DOA(i,k,:) = method(data(10001:32051,:),Fs,args);
         disp(['Folder [',num2str(i),'/',num2str(numel(folders)),']']);
         disp(['File [',num2str(k),'/',num2str(numel(files)),']']);
     end

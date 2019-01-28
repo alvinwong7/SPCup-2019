@@ -15,8 +15,8 @@ clear variables;
 close all;
 
 % Set method equal to the handle of the function you wish to evaluate
-method = @baseline;
-args = {};
+method = @estDOAmodel;
+args = {0};
 
 addpath(genpath(fileparts(pwd)));
 evaluate(method,args,'speech');
