@@ -19,9 +19,9 @@ clc
 
 %% PATHs
 DATA = 'flight'; % static or flight
-PATH_DATA = [fileparts(pwd) '/data/dev_' DATA '/'];
+PATH_DATA = [fileparts(pwd) '\data\new_data\speech\'];
 
-PATH_AUDIO = [PATH_DATA 'audio/'];
+PATH_AUDIO = [PATH_DATA '-15\'];
 PATH_GT = PATH_DATA;
 
 % add MBSSLocate toolbox to the current matlab session
@@ -30,7 +30,7 @@ addpath(genpath('./MBSSLocate/'));
 %% FLAGs
 % if 'development' is 1, load the ground-truth files and
 % perform the evaluation
-development = 1;
+development = 0;
 
 %% HARD CODED VARIBLEs
 %    coord:    x         y         z
@@ -61,7 +61,7 @@ end
     
 if development
     % load groud-truth files
-    file = load([PATH_GT 'SPCUP19_dev_' DATA '.mat']);
+    file = load([PATH_GT 'sourceData.mat']);
     
     eval(['gt_azimuth = file.' data_specification '_azimuth;'])
     eval(['gt_elevation = file.' data_specification '_elevation;'])
@@ -71,6 +71,8 @@ if development
     azRef = gt_azimuth;   % azimuth reference
     elRef = gt_elevation; % elevation refernce
 end
+J = 1;
+T = 1;
 
 
 %% BASELINE
@@ -167,6 +169,15 @@ for j = 1:J
         
         % Run the localization method
         % here you should write your own code
+        
+            
+        wienerRefSignal = zeros(10*fs, n_chan);
+        for i = 1:4
+            wienerRefSignalTemp = audioread([fileparts(pwd) + "\data\individual_motors_cut\Motor" + i + "_50.wav"]);
+            wienerRefSignal = wienerRefSignal + wienerRefSignalTemp(10*fs , :);
+        end
+        
+        
         [azEst, elEst, ~, ~] = ...
             MBSS_locate_spec(wav_frame,wienerRefSignal,sMBSSParam);
         
