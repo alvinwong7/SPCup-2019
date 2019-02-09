@@ -15,7 +15,7 @@ close all; clear all; clc
 % snrIncrement - 
 speech = 1;
 broadband = 1;
-simulate_source = 1;
+simulate_source = 0;
 snrRange = 1;
 snrIncrement = 4;
 
@@ -85,7 +85,7 @@ PATH = 'new_data/';
 
 %% Generate files
 
-if speech 
+if speech && simulate_source
     PATH_SOURCE = 'clean_speech_mono/speech/';
     PATH_NEW_DATA = [PATH 'speech/'];
     mkdir(PATH)
@@ -161,6 +161,34 @@ if speech
     end
 end
 
+if speech && simulate_source == 0
+    PATH_SOURCE = 'dev_flight/audio/';
+    PATH_NEW_DATA = [PATH 'flight_real/'];
+    mkdir(PATH);
+    mkdir(PATH_NEW_DATA);
+    whiteNoiseFiles = dir('dev_flight/audio/*.wav');
+    for i = 1:length(snrs)
+        fileNum = 1;
+        PATH_FILE = [PATH_NEW_DATA int2str(snrs(i)) '/'];
+        mkdir(PATH_FILE)
+        for j = 1:length(whiteNoiseFiles)
+            PATH_AUDIO = [PATH_SOURCE whiteNoiseFiles(j).name];
+            [y, fs] = audioread(PATH_AUDIO);
+            noise = mixMotorNoise(y,motorSpeed);
+            noise = (noise/norm(rms(noise)))*(norm(rms(y))/10.0^(0.05*snrs(i)));
+            mixed = y + noise;
+            while 1
+                fileName = [PATH_FILE int2str(fileNum) '.wav'];
+                fileNum = fileNum + 1;
+                if ~isfile(fileName)
+                     audiowrite(fileName,mixed,fs);
+                    break
+                end
+            end
+        end
+    end
+end
+    
 if broadband && simulate_source
     PATH_SOURCE = 'dev_static/audio';
     PATH_NEW_DATA = [PATH 'broadband_simulated/'];
