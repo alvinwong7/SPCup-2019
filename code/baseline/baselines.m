@@ -172,14 +172,22 @@ for j = 1:J
         
             
         wienerRefSignal = zeros(10*fs, n_chan);
-        for i = 1:4
+        for i = 4:4
             wienerRefSignalTemp = audioread([fileparts(pwd) + "\data\individual_motors_cut\Motor" + i + "_50.wav"]);
-            wienerRefSignal = wienerRefSignal + wienerRefSignalTemp(10*fs , :);
+            wienerRefSignal = wienerRefSignal(1:10*fs, :) + wienerRefSignalTemp(1:10*fs, :);
         end
-        
-        
-        [azEst, elEst, ~, ~] = ...
+
+        [azEst, elEst, specGlobal, ~, ~] = ...
             MBSS_locate_spec(wav_frame,wienerRefSignal,sMBSSParam);
+        
+        test = reshape(specGlobal, [360,101]);
+        surf(sMBSSParam.azimuth, sMBSSParam.elevation, test(:,:)','EdgeColor','none')
+        axis xy; axis tight; colormap(jet); view(0,90);
+        hold on
+
+        fileToPlot = load([PATH_AUDIO 'sourceData.mat']);
+        scatter3(fileToPlot.sourceData(1,1),fileToPlot.sourceData(J,2), test(round(fileToPlot.sourceData(J,2)+91),round(fileToPlot.sourceData(1,1)+180))+1000, 'kx','lineWidth',2);   
+        hold off
         
         % Printing for the development
         if development
