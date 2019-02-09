@@ -218,6 +218,10 @@ for block_idx = 1 : nblocks
             specGlobal = shiftdim(sum(specInst,2));
     end
     
+    test = reshape(specGlobal, [360,101]);
+    surf(test(:,:),'EdgeColor','none')
+    axis xy; axis tight; colormap(jet); view(0,90);
+    
     [pfEstAngles,figHandle] = MBSS_findPeaks2D(figHandle,specGlobal, sMBSSParam.azimuth, sMBSSParam.elevation, sMBSSParam.azimuthGrid, sMBSSParam.elevationGrid, sMBSSParam.nsrc, sMBSSParam.minAngle, sMBSSParam.angularSpectrumMeth, sMBSSParam.specDisplay);
     nSrcFound = size(pfEstAngles,1);
 
