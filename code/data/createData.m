@@ -14,8 +14,8 @@ close all; clear all; clc
     % will only create +5, and +8 SNRs)
 % snrIncrement - 
 speech = 1;
-broadband = 1;
-simulate_source = 0;
+broadband = 0;
+simulate_source = 1;
 snrRange = 1;
 snrIncrement = 4;
 
@@ -83,7 +83,7 @@ end
 % Path to save new data
 PATH = 'new_data/';
 
-%% Generate files
+%% GENERATE FILES
 
 if speech && simulate_source
     PATH_SOURCE = 'clean_speech_mono/speech/';
@@ -161,34 +161,35 @@ if speech && simulate_source
     end
 end
 
-if speech && simulate_source == 0
-    PATH_SOURCE = 'dev_flight/audio/';
-    PATH_NEW_DATA = [PATH 'flight_real/'];
-    mkdir(PATH);
-    mkdir(PATH_NEW_DATA);
-    whiteNoiseFiles = dir('dev_flight/audio/*.wav');
-    for i = 1:length(snrs)
-        fileNum = 1;
-        PATH_FILE = [PATH_NEW_DATA int2str(snrs(i)) '/'];
-        mkdir(PATH_FILE)
-        for j = 1:length(whiteNoiseFiles)
-            PATH_AUDIO = [PATH_SOURCE whiteNoiseFiles(j).name];
-            [y, fs] = audioread(PATH_AUDIO);
-            noise = mixMotorNoise(y,motorSpeed);
-            noise = (noise/norm(rms(noise)))*(norm(rms(y))/10.0^(0.05*snrs(i)));
-            mixed = y + noise;
-            while 1
-                fileName = [PATH_FILE int2str(fileNum) '.wav'];
-                fileNum = fileNum + 1;
-                if ~isfile(fileName)
-                     audiowrite(fileName,mixed,fs);
-                    break
-                end
-            end
-        end
-    end
-end
-    
+% I forgot why this is here, so i'm commenting it out for now
+% if flight && simulate_source == 0
+%     PATH_SOURCE = 'dev_flight/audio/';
+%     PATH_NEW_DATA = [PATH 'flight_real/'];
+%     mkdir(PATH);
+%     mkdir(PATH_NEW_DATA);
+%     whiteNoiseFiles = dir('dev_flight/audio/*.wav');
+%     for i = 1:length(snrs)
+%         fileNum = 1;
+%         PATH_FILE = [PATH_NEW_DATA int2str(snrs(i)) '/'];
+%         mkdir(PATH_FILE)
+%         for j = 1:length(whiteNoiseFiles)
+%             PATH_AUDIO = [PATH_SOURCE whiteNoiseFiles(j).name];
+%             [y, fs] = audioread(PATH_AUDIO);
+%             noise = mixMotorNoise(y,motorSpeed);
+%             noise = (noise/norm(rms(noise)))*(norm(rms(y))/10.0^(0.05*snrs(i)));
+%             mixed = y + noise;
+%             while 1
+%                 fileName = [PATH_FILE int2str(fileNum) '.wav'];
+%                 fileNum = fileNum + 1;
+%                 if ~isfile(fileName)
+%                      audiowrite(fileName,mixed,fs);
+%                     break
+%                 end
+%             end
+%         end
+%     end
+% end
+
 if broadband && simulate_source
     PATH_SOURCE = 'dev_static/audio';
     PATH_NEW_DATA = [PATH 'broadband_simulated/'];
@@ -270,6 +271,9 @@ if broadband && simulate_source == 0
     mkdir(PATH);
     mkdir(PATH_NEW_DATA);
     whiteNoiseFiles = dir('dev_static/audio/*.wav');
+    load(fullfile('dev_static','SPCUP19_dev_static.mat'));
+    sourceData(:,1) = static_azimuth;
+    sourceData(:,2) = static_elevation;
     for i = 1:length(snrs)
         fileNum = 1;
         PATH_FILE = [PATH_NEW_DATA int2str(snrs(i)) '/'];
@@ -289,5 +293,6 @@ if broadband && simulate_source == 0
                 end
             end
         end
+        save(PATH_FILE, 'sourceData')
     end
 end
