@@ -1,4 +1,4 @@
-function [azEst, elEst, blockTimestamps,sElapsTime,figHandle] = MBSS_locate_spec(x,wienerRefSignal,sMBSSParam)
+function [azEst, elEst, specGlobal, blockTimestamps,sElapsTime,figHandle] = MBSS_locate_spec(x,wienerRefSignal,sMBSSParam)
 %% Function MBSS_locate_spec
 % Estimate source localizations in a multichannel convolutive mixture using
 % an angular spectrum based approach
@@ -217,7 +217,7 @@ for block_idx = 1 : nblocks
         case 'sum'
             specGlobal = shiftdim(sum(specInst,2));
     end
-    
+        
     [pfEstAngles,figHandle] = MBSS_findPeaks2D(figHandle,specGlobal, sMBSSParam.azimuth, sMBSSParam.elevation, sMBSSParam.azimuthGrid, sMBSSParam.elevationGrid, sMBSSParam.nsrc, sMBSSParam.minAngle, sMBSSParam.angularSpectrumMeth, sMBSSParam.specDisplay);
     nSrcFound = size(pfEstAngles,1);
 
