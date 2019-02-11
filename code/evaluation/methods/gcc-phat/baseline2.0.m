@@ -181,41 +181,4 @@ for j = 1:J
     fprintf('\n')
     
 end
-
-%% TRAJECTORIES
-% plot predicted and ground truth drone trajectories
-figure(1)
-c = parula(J);
-
-if development
-    for j = 1:J
-        if strcmp(DATA, 'flight')
-            plot( azRef(j,:), elRef(j,:),'--','color',c(j,:))
-            hold on
-            plot(azPred(j,:), elPred(j,:),'-','color',c(j,:))
-            text(azPred(j,8)+3, elPred(j,8)-3, num2str(j))
-            title('Ground truth and estimated trajectories')
-        else
-            scatter( azRef(j), elRef(j),'b','o')
-            hold on
-            scatter(azPred(j), elPred(j),'r','x')
-            text(azPred(j)+5, elPred(j)-5, num2str(j))
-            title('Ground truth and estimated points')
-        end
-        xlim([-179 180])
-        ylim([-90 0])
-        xlabel('Azimuth [degree]')
-        ylabel('Elevation [degree]')
-    end
-end
     
-%% EVALUATION
-if development == 1
-    
-    %%% dregon challeng metric
-    dregon_score  = @(pred, ref) sum(abs(pred-ref)<10,1)/size(ref,1);
-    
-    %%% compute metric
-    azimuth_acc   = dregon_score(azPred, azRef);
-    elevation_acc = dregon_score(elPred, elRef);
-end
