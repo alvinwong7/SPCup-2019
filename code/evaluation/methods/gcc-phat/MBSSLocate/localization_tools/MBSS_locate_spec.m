@@ -202,14 +202,12 @@ for block_idx = 1 : nblocks
     specInst = MBSS_computeAngularSpectrum(sMBSSParam.angularSpectrumMeth,sMBSSParam.angularSpectrumDebug,aggregationParam,X_current,sMBSSParam.f,sMBSSParam.freqBins);
     
     % Normalize instantaneous local angular spectra if requested
-    if(sMBSSParam.normalizeSpecInst)
-        [~,nFrames,~] = size(specInst);
-        for i=1:nFrames
-            minVal = min(min(specInst(:,i)));
-            specInst(:,i)=(specInst(:,i) - minVal)/ max(max(specInst(:,i)- minVal));
-        end
+    [~,nFrames,~] = size(specInst);
+    for i=1:nFrames
+        minVal = min(min(specInst(:,i)));
+        specInst(:,i)=(specInst(:,i) - minVal)/ max(max(specInst(:,i)- minVal));
     end
-    
+
     % Pooling
     switch sMBSSParam.pooling
         case 'max'
@@ -221,6 +219,8 @@ for block_idx = 1 : nblocks
     [pfEstAngles,figHandle] = MBSS_findPeaks2D(figHandle,specGlobal, sMBSSParam.azimuth, sMBSSParam.elevation, sMBSSParam.azimuthGrid, sMBSSParam.elevationGrid, sMBSSParam.nsrc, sMBSSParam.minAngle, sMBSSParam.angularSpectrumMeth, sMBSSParam.specDisplay);
     nSrcFound = size(pfEstAngles,1);
 
+    [total, argmax, valmax] = 
+    
     azEst(block_idx,1:nSrcFound) = pfEstAngles(:,1)';
     elEst(block_idx,1:nSrcFound) = pfEstAngles(:,2)';
     

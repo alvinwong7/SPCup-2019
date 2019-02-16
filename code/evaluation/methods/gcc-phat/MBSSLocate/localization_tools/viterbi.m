@@ -1,4 +1,4 @@
-function [total, argmax, valmax] = viterbi(obs, states, start_p, trans_p, emit_p)
+function [total, argmax, valmax] = viterbi(obs, states, start_p, trans_p)
     T = {};
     for state = 1:length(states)
         T{state} = {start_p(state),states(state),start_p(state)};
@@ -12,7 +12,7 @@ function [total, argmax, valmax] = viterbi(obs, states, start_p, trans_p, emit_p
           for source_state = 1:length(states)
               Ti = T{source_state};
               prob = Ti{1}; v_path = Ti{2}; v_prob = Ti{3};
-              p = emit_p(source_state,obs(output)) * trans_p(source_state,next_state);
+              p = trans_p(source_state,next_state);
               prob = prob*p;
               v_prob = v_prob*p;
               total = total + prob;
