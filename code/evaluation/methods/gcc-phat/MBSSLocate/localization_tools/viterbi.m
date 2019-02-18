@@ -16,8 +16,8 @@ function [total, argmax, valmax, P] = viterbi(obs, states)
             for source_state = 1:length(states(1,:,:))
                 Ti = T{output-1,source_state};
                 prob = Ti{1}; v_path = Ti{2}; v_prob = Ti{3};
-                source_az = states(output-1, next_state, 1);
-                source_el = states(output-1, next_state, 2);
+                source_az = states(output-1, source_state, 1);
+                source_el = states(output-1, source_state, 2);
                 p = log(transition(source_az, source_el, next_az, next_el, 0.1));
                 prob = prob + p;
                 v_prob = v_prob + p;
