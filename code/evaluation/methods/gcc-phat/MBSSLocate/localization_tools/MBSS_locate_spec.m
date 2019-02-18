@@ -218,8 +218,6 @@ for block_idx = 1 : nblocks
         
     [pfEstAngles,figHandle] = MBSS_findPeaks2D(figHandle,specGlobal, sMBSSParam.azimuth, sMBSSParam.elevation, sMBSSParam.azimuthGrid, sMBSSParam.elevationGrid, sMBSSParam.nsrc, sMBSSParam.minAngle, sMBSSParam.angularSpectrumMeth, sMBSSParam.specDisplay);
     nSrcFound = size(pfEstAngles,1);
-
-    [total, argmax, valmax] = 
     
     azEst(block_idx,1:nSrcFound) = pfEstAngles(:,1)';
     elEst(block_idx,1:nSrcFound) = pfEstAngles(:,2)';
