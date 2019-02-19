@@ -16,10 +16,10 @@
 close all; clear; clc
 
 %% PATHs
-DATA = 'flight'; % static or flight
+DATA = 'static'; % static or flight
 PATH_DATA = fullfile('..','..','..','data','dev_flight');
 
-PATH_AUDIO = fullfile('..','..','..','data','dev_flight','audio');
+PATH_AUDIO = fullfile('..','..','..','data','new_data','speech','-17');
 PATH_GT = PATH_DATA;
 
 % add MBSSLocate toolbox to the current matlab session
@@ -134,7 +134,7 @@ sMBSSParam = MBSS_InputParam2Struct(angularSpectrumMeth,speedOfSound,fftSize_sec
 
 %% FILE-WISE and FRAME-WISE PROCESSING
 J = 1;
-T = 15;
+T = 1;
 
 % variable allocation
 azPred = zeros(J, T);
@@ -145,7 +145,7 @@ for j = 1:J
     fprintf('Processing audio sample %02i/%02i:\n',j,J)
     
     % Load audio filename    
-    [wavforms,fs_wav] = audioread([PATH_AUDIO '\' num2str(j) '.wav']);
+    [wavforms,fs_wav] = audioread([PATH_AUDIO '\' '2.wav']);
     % resampling to the given sampling frequency
     [p,q] = rat(fs/fs_wav,0.0001);
     wavforms = resample(wavforms,p,q);
@@ -168,11 +168,25 @@ for j = 1:J
         
         % Run the localization method
         % here you should write your own code
-        [azEst, elEst, ~, ~] = ...
+        [azEst, elEst, specGlobal, ~, ~] = ...
             MBSS_locate_spec(wav_frame,wienerRefSignal,sMBSSParam);
         
         sources(t,:,1) = azEst;
         sources(t,:,2) = elEst;
+        
+        test = reshape(specGlobal, [360,101]);
+        figure
+        surf(sMBSSParam.azimuth, sMBSSParam.elevation, test(:,:)','EdgeColor','none')
+        axis xy; axis tight; colormap(jet); view(0,90);
+        hold on
+        
+        %for multiple sources
+        for i = 1:length(azEst)
+            scatter3(azEst(1,i),elEst(1,i),1, 'kx','lineWidth',2);
+        end
+        %fileToPlot = load([PATH_AUDIO 'sourceData.mat']);
+        %scatter3(fileToPlot.sourceData(j,1),fileToPlot.sourceData(j,2), test(round(fileToPlot.sourceData(J,2)+91),round(fileToPlot.sourceData(1,1)+180))+5000, 'kx','lineWidth',2);   
+        hold off
         
         % Printing for the development
         if development
