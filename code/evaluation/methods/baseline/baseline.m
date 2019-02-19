@@ -1,4 +1,4 @@
-function DOA = baseline(wavforms,fs_wav,params)
+function DOA = baseline(waveforms,fs_wav,params)
 %% PATHs
     % add MBSSLocate toolbox to the current matlab session
     addpath(fullfile('..','baseline','MBSSLocate'));
@@ -87,11 +87,7 @@ function DOA = baseline(wavforms,fs_wav,params)
     azPred = zeros(1, T);
     elPred = zeros(1, T);
 
-    % resampling to the given sampling frequency
-    [p,q] = rat(fs/fs_wav,0.0001);
-    wavforms = resample(wavforms,p,q);
-
-    [n_samples, n_chan] = size(wavforms);
+    [n_samples, n_chan] = size(waveforms);
 
     % Pick current frame of length frame_size
     for t = 1:T
@@ -105,7 +101,7 @@ function DOA = baseline(wavforms,fs_wav,params)
             frame_end = n_samples;
         end
 
-        wav_frame = wavforms(frame_start:frame_end,:); % nsampl x nchan
+        wav_frame = waveforms(frame_start:frame_end,:); % nsampl x nchan
 
         % Run the localization method
         % here you should write your own code

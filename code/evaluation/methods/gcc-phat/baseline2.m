@@ -1,4 +1,4 @@
-function DOA = baseline(wavforms,fs_wav,params)
+function DOA = baseline(waveforms,fs_wav,params)
 % main function for participants of the SPCUP19 challenge to 
 % load each recording and to run their algorithm.
 %
@@ -17,7 +17,7 @@ function DOA = baseline(wavforms,fs_wav,params)
 close all; clear; clc
 
 %% PATHs
-DATA = 'static'; % static or flight
+DATA = 'flight'; % static or flight
 PATH_DATA = fullfile('..','..','..','data','dev_flight');
 
 PATH_AUDIO = fullfile('..','..','..','data','new_data','speech','-17');
@@ -146,14 +146,8 @@ DOA = [];
 for j = 1:J
     
     fprintf('Processing audio sample %02i/%02i:\n',j,J)
-    
-    % Load audio filename    
-    [wavforms,fs_wav] = audioread([PATH_AUDIO '\' '2.wav']);
-    % resampling to the given sampling frequency
-    [p,q] = rat(fs/fs_wav,0.0001);
-    wavforms = resample(wavforms,p,q);
-    
-    [n_samples, n_chan] = size(wavforms);
+
+    [n_samples, n_chan] = size(waveforms);
     
     % Pick current frame of length frame_size
     for t = 1:T
