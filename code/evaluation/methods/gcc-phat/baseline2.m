@@ -1,3 +1,4 @@
+function DOA = baseline(wavforms,fs_wav,params)
 % main function for participants of the SPCUP19 challenge to 
 % load each recording and to run their algorithm.
 %
@@ -140,6 +141,8 @@ T = 1;
 azPred = zeros(J, T);
 elPred = zeros(J, T);
 
+DOA = [];
+
 for j = 1:J
     
     fprintf('Processing audio sample %02i/%02i:\n',j,J)
@@ -202,7 +205,9 @@ for j = 1:J
     for t = 1:T
         pred = [pred; sources(t,argmax(t),1) sources(t,argmax(t),2)];
     end
+    
+    DOA = [DOA pred];
+    
     fprintf('\n')
-    
 end
-    
+end
