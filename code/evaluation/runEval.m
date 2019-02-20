@@ -15,8 +15,13 @@ clear variables;
 close all;
 
 % Set method equal to the handle of the function you wish to evaluate
-methodName = 'baseline';
-testType = 'broadband_real';
+methodName = 'baseline2';
+% The different testTypes are:
+%   - flight_real
+%   - speech
+%   - broadband_simulated
+%   - broadband_real
+testType = 'flight_real';
 method = str2func(methodName);
 
 if contains(methodName,'baseline');
