@@ -15,8 +15,15 @@ clear variables;
 close all;
 
 % Set method equal to the handle of the function you wish to evaluate
-method = @estDOAmodel;
-args = {0};
+methodName = 'baseline';
+
+method = str2func(methodName);
+
+if contains(methodName,'baseline2');
+    args{1} = methodName;
+else
+    args = 0;
+end
 
 addpath(genpath(fileparts(pwd)));
-evaluate(method,args,'speech');
+evaluate(method,args,'flight_real');

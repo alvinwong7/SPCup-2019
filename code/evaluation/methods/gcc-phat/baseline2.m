@@ -1,35 +1,20 @@
-function DOA = baseline(waveforms,fs_wav,params)
-% main function for participants of the SPCUP19 challenge to 
-% load each recording and to run their algorithm.
-%
-% Inputs:  N/A (loads data from mat files specified by the
-%          variables in PATH)
-% Outputs: N/A (saves data to mat files)
-%
-% Authors: Diego Di Carlo
-%          Antoine Deleforge
-%
-% Notice:  This is a preliminary version as part of the SPCUP19 consultation
-%          pre-release. Please report problems and bugs to the author on the
-%          PIAZZA platform webpage or on the github page
-%
-
+function DOA = baseline(wavforms,fs_wav,params)
 close all; clear; clc
 
 %% PATHs
-DATA = 'flight'; % static or flight
-PATH_DATA = fullfile('..','..','..','data','dev_flight');
-
-PATH_AUDIO = fullfile('..','..','..','data','new_data','speech','-17');
-PATH_GT = PATH_DATA;
+data = char(params{1});
+if contains('flight',data)
+    J = 1;
+    T = 15;
+    DATA = 'flight';
+else
+    J = 1;
+    T = 1;
+    DATA = 'static';
+end
 
 % add MBSSLocate toolbox to the current matlab session
 addpath(genpath('./MBSSLocate/'));
-
-%% FLAGs
-% if 'development' is 1, load the ground-truth files and
-% perform the evaluation
-development = 0;
 
 %% HARD CODED VARIBLEs
 %    coord:    x         y         z
@@ -41,36 +26,6 @@ micPos = [  0.0420    0.0615   -0.0410;  % mic 1
             0.0420   -0.0615    0.0410;  % mic 6
             0.0615   -0.0420   -0.0410;  % mic 7
             0.0615    0.0420    0.0410]; % mic 8
-
-%% GROUND TRUTH
-% mat files are:
-%   - SPCUP19_dev_flight.mat, containing:
-%       - broadband_azimuth
-%       - broadband_elevation
-%   - SPCUP19_dev_static.mat, containing:
-%       - static_azimuth
-%       - static_elevation
-% Thus an additional variabile, 'data_specification', is used
-if strcmp(DATA, 'flight')
-    data_specification = 'broadband';
-end
-if strcmp(DATA, 'static')
-    data_specification = 'static';
-end
-    
-if development
-    % load groud-truth files
-    file = load([PATH_GT 'SPCUP19_dev_' DATA '.mat']);
-    
-    eval(['gt_azimuth = file.' data_specification '_azimuth;'])
-    eval(['gt_elevation = file.' data_specification '_elevation;'])
-    
-    [J, T] = size(gt_azimuth); % J audio files x T frames
-    
-    azRef = gt_azimuth;   % azimuth reference
-    elRef = gt_elevation; % elevation refernce
-end
-
 
 %% BASELINE
 
@@ -134,74 +89,60 @@ angularSpectrumDebug       = 0;          % 1: Enable additional plots to debug t
 sMBSSParam = MBSS_InputParam2Struct(angularSpectrumMeth,speedOfSound,fftSize_sec,blockDuration_sec,blockOverlap_percent,pooling,azBound,elBound,gridRes,alphaRes,minAngle,nsrce,fs,applySpecInstNormalization,specDisplay,enableWienerFiltering,wienerMode,freqRange,micPos,isArrayMoving,subArray,sceneTimeStamps,angularSpectrumDebug);
 
 %% FILE-WISE and FRAME-WISE PROCESSING
-J = 1;
-T = 1;
-
 % variable allocation
 azPred = zeros(J, T);
 elPred = zeros(J, T);
 
 DOA = [];
 
-for j = 1:J
-    
-    fprintf('Processing audio sample %02i/%02i:\n',j,J)
+[n_samples, n_chan] = size(wavforms);
 
-    [n_samples, n_chan] = size(waveforms);
-    
-    % Pick current frame of length frame_size
-    for t = 1:T
-        
-        fprintf('  -- frame: %02i/%02i\n',t,T)
-        
-        % frame processing
-        frame_start = floor(fs*((t-1)*frame_hop))+1;
-        frame_end = frame_start + floor(fs*frame_size)-1;
-        if frame_end > n_samples
-            frame_end = n_samples;
-        end
-        
-        wav_frame = wavforms(frame_start:frame_end,:); % nsampl x nchan
-        
-        % Run the localization method
-        % here you should write your own code
-        [azEst, elEst, specGlobal, ~, ~] = ...
-            MBSS_locate_spec(wav_frame,wienerRefSignal,sMBSSParam);
-        
-        sources(t,:,1) = azEst;
-        sources(t,:,2) = elEst;
-        
-        test = reshape(specGlobal, [360,101]);
-        figure
-        surf(sMBSSParam.azimuth, sMBSSParam.elevation, test(:,:)','EdgeColor','none')
-        axis xy; axis tight; colormap(jet); view(0,90);
-        hold on
-        
-        %for multiple sources
-        for i = 1:length(azEst)
-            scatter3(azEst(1,i),elEst(1,i),1, 'kx','lineWidth',2);
-        end
-        %fileToPlot = load([PATH_AUDIO 'sourceData.mat']);
-        %scatter3(fileToPlot.sourceData(j,1),fileToPlot.sourceData(j,2), test(round(fileToPlot.sourceData(J,2)+91),round(fileToPlot.sourceData(1,1)+180))+5000, 'kx','lineWidth',2);   
-        hold off
-        
-        % Printing for the development
-        if development
-            azPred(j,t) = azEst;
-            fprintf('%1.2f %1.2f\n',azRef(j,t), azPred(j,t));
-            elPred(j,t) = elEst;
-            fprintf('%1.2f %1.2f\n\n',elRef(j,t), elPred(j,t));
-        end
-        
+% Pick current frame of length frame_size
+for t = 1:T
+
+    fprintf('  -- frame: %02i/%02i\n',t,T)
+
+    % frame processing
+    frame_start = floor(fs*((t-1)*frame_hop))+1;
+    frame_end = frame_start + floor(fs*frame_size)-1;
+    if frame_end > n_samples
+        frame_end = n_samples;
     end
-    [total, argmax, valmax, P] = viterbi(T, sources);
-    pred = [];
-    for t = 1:T
-        pred = [pred; sources(t,argmax(t),1) sources(t,argmax(t),2)];
+
+    wav_frame = wavforms(frame_start:frame_end,:); % nsampl x nchan
+
+    % Run the localization method
+    % here you should write your own code
+    [azEst, elEst, specGlobal, ~, ~] = ...
+        MBSS_locate_spec(wav_frame,wienerRefSignal,sMBSSParam);
+
+    sources(t,:,1) = azEst;
+    sources(t,:,2) = elEst;
+
+    test = reshape(specGlobal, [360,101]);
+    figure
+    surf(sMBSSParam.azimuth, sMBSSParam.elevation, test(:,:)','EdgeColor','none')
+    axis xy; axis tight; colormap(jet); view(0,90);
+    hold on
+
+    %for multiple sources
+    for i = 1:length(azEst)
+        scatter3(azEst(1,i),elEst(1,i),1, 'kx','lineWidth',2);
     end
-    
-    DOA = [DOA pred];
-    
-    fprintf('\n')
+    %fileToPlot = load([PATH_AUDIO 'sourceData.mat']);
+    %scatter3(fileToPlot.sourceData(j,1),fileToPlot.sourceData(j,2), test(round(fileToPlot.sourceData(J,2)+91),round(fileToPlot.sourceData(1,1)+180))+5000, 'kx','lineWidth',2);   
+    hold off
+
 end
+
+[total, argmax, valmax, P] = viterbi(T, sources);
+pred = [];
+
+for t = 1:T
+    pred = [pred; sources(t,argmax(t),1) sources(t,argmax(t),2)];
+end
+
+DOA = [DOA pred];
+
+fprintf('\n')
 end

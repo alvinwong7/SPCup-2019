@@ -1,4 +1,14 @@
-function DOA = baseline(waveforms,fs_wav,params)
+function DOA = baseline(wavforms,fs_wav,params)
+data = char(params{1});
+if contains('flight',data)
+    J = 1;
+    T = 15;
+    DATA = 'flight';
+else
+    J = 1;
+    T = 1;
+    DATA = 'static';
+end
 %% PATHs
     % add MBSSLocate toolbox to the current matlab session
     addpath(fullfile('..','baseline','MBSSLocate'));
@@ -28,13 +38,13 @@ function DOA = baseline(waveforms,fs_wav,params)
     % resampling is performed later
     fs = 44100; 
     % if the flight data, than process the signal frame-wise
-    %if strcmp(DATA, 'flight')
-    %    frame_size = 0.500; % 500 [ms] - !hardcode; see Challenge's syllabus
-    %    frame_hop  = 0.250; % 250 [ms] - !hardcode; see Challenge's syllabus
-    %else
+    if strcmp(DATA, 'flight')
+       frame_size = 0.500; % 500 [ms] - !hardcode; see Challenge's syllabus
+       frame_hop  = 0.250; % 250 [ms] - !hardcode; see Challenge's syllabus
+    else
         frame_size = 4; % 4 [s]        - !hardcode; see Challenge's syllabus
         frame_hop  = 0; % no hop size  - !hardcode; see Challenge's syllabus
-    %end
+    end
 
 
     % MBSS Locate Parameters
@@ -83,11 +93,10 @@ function DOA = baseline(waveforms,fs_wav,params)
     %% FILE-WISE and FRAME-WISE PROCESSING
     % variable allocation
     % T will have to change between flight and static
-    T = 1;
     azPred = zeros(1, T);
     elPred = zeros(1, T);
 
-    [n_samples, n_chan] = size(waveforms);
+    [n_samples, n_chan] = size(wavforms);
 
     % Pick current frame of length frame_size
     for t = 1:T
@@ -101,7 +110,7 @@ function DOA = baseline(waveforms,fs_wav,params)
             frame_end = n_samples;
         end
 
-        wav_frame = waveforms(frame_start:frame_end,:); % nsampl x nchan
+        wav_frame = wavforms(frame_start:frame_end,:); % nsampl x nchan
 
         % Run the localization method
         % here you should write your own code
