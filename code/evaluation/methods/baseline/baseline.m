@@ -97,7 +97,7 @@ end
     elPred = zeros(1, T);
 
     [n_samples, n_chan] = size(wavforms);
-
+    DOA = [];
     % Pick current frame of length frame_size
     for t = 1:T
 
@@ -126,8 +126,7 @@ end
         end
 
     end
-    
-    DOA = [azPred, elPred];
+    DOA = [azPred; elPred]';
 
     fprintf('\n')
 end
