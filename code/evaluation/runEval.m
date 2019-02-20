@@ -16,14 +16,14 @@ close all;
 
 % Set method equal to the handle of the function you wish to evaluate
 methodName = 'baseline';
-
+testType = 'broadband_real';
 method = str2func(methodName);
 
-if contains(methodName,'baseline2');
-    args{1} = methodName;
+if contains(methodName,'baseline');
+    args{1} = testType;
 else
     args = 0;
 end
 
 addpath(genpath(fileparts(pwd)));
-evaluate(method,args,'flight_real');
+evaluate(method,args,testType);

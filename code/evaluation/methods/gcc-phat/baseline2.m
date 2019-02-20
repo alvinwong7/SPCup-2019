@@ -1,9 +1,7 @@
 function DOA = baseline(wavforms,fs_wav,params)
-close all; clear; clc
-
 %% PATHs
 data = char(params{1});
-if contains('flight',data)
+if contains(data, 'flight')
     J = 1;
     T = 15;
     DATA = 'flight';
@@ -119,19 +117,19 @@ for t = 1:T
     sources(t,:,1) = azEst;
     sources(t,:,2) = elEst;
 
-    test = reshape(specGlobal, [360,101]);
-    figure
-    surf(sMBSSParam.azimuth, sMBSSParam.elevation, test(:,:)','EdgeColor','none')
-    axis xy; axis tight; colormap(jet); view(0,90);
-    hold on
+%     test = reshape(specGlobal, [360,101]);
+%     figure
+%     surf(sMBSSParam.azimuth, sMBSSParam.elevation, test(:,:)','EdgeColor','none')
+%     axis xy; axis tight; colormap(jet); view(0,90);
+%     hold on
 
-    %for multiple sources
-    for i = 1:length(azEst)
-        scatter3(azEst(1,i),elEst(1,i),1, 'kx','lineWidth',2);
-    end
-    %fileToPlot = load([PATH_AUDIO 'sourceData.mat']);
-    %scatter3(fileToPlot.sourceData(j,1),fileToPlot.sourceData(j,2), test(round(fileToPlot.sourceData(J,2)+91),round(fileToPlot.sourceData(1,1)+180))+5000, 'kx','lineWidth',2);   
-    hold off
+%     %for multiple sources
+%     for i = 1:length(azEst)
+%         scatter3(azEst(1,i),elEst(1,i),1, 'kx','lineWidth',2);
+%     end
+%     %fileToPlot = load([PATH_AUDIO 'sourceData.mat']);
+%     %scatter3(fileToPlot.sourceData(j,1),fileToPlot.sourceData(j,2), test(round(fileToPlot.sourceData(J,2)+91),round(fileToPlot.sourceData(1,1)+180))+5000, 'kx','lineWidth',2);   
+%     hold off
 
 end
 

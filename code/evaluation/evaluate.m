@@ -23,10 +23,16 @@ end
 folders(row2clr) = []; folders(row2clr) = [];
 
 num_files = size(dir(fullfile(folders(1).folder,folders(1).name,'*.wav')),1);
-DOA = zeros(numel(folders),num_files,2);
 SNR = zeros(1,numel(folders));
-correct_azimuth = zeros(numel(folders),num_files);
-correct_elevation = zeros(numel(folders),num_files);
+if ~contains(testType, 'flight')
+    DOA = zeros(numel(folders),num_files,2);
+    correct_azimuth = zeros(numel(folders),num_files);
+    correct_elevation = zeros(numel(folders),num_files);
+else
+    DOA = zeros(numel(folders),num_files*15,2);
+    correct_azimuth = zeros(numel(folders),num_files*15);
+    correct_elevation = zeros(numel(folders),num_files*15);
+end
 error_azimuth = zeros(numel(folders),1);
 error_elevation = zeros(numel(folders),1);
 
@@ -34,13 +40,15 @@ for i=1:numel(folders)
     SNR(i) = str2double(folders(i).name);
     files = dir(fullfile(folders(i).folder,folders(i).name,'*.wav'));
     load(fullfile(folders(i).folder,folders(i).name,'sourceData.mat'));
+    methodDOA = [];
     for k = 1:numel(files)
         fileName = [int2str(k) '.wav'];
         [data,Fs] = audioread(fullfile(files(k).folder,fileName));
-        DOA(i,k,:) = method(data(10001:32051,:),Fs,args);
+        methodDOA = [methodDOA; method(data,Fs,args)];
         disp(['Folder [',num2str(i),'/',num2str(numel(folders)),']']);
         disp(['File [',num2str(k),'/',num2str(numel(files)),']']);
     end
+    DOA(i,:,:) = methodDOA;
     correct_azimuth(i,:) = abs(sourceData(:,1) - DOA(i,:,1)') < 10;
     correct_elevation(i,:) = abs(sourceData(:,2) - DOA(i,:,2)') < 10;
     error_azimuth(i) = mean((sourceData(:,1) - DOA(i,:,1)').^2);

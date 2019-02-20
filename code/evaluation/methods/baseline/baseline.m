@@ -1,6 +1,6 @@
 function DOA = baseline(wavforms,fs_wav,params)
 data = char(params{1});
-if contains('flight',data)
+if contains(data, 'flight')
     J = 1;
     T = 15;
     DATA = 'flight';
