@@ -21,7 +21,7 @@ function C = truncGauss(t1,p1,t2,p2,s,reach)
     if d < dist(0,0,0,reach)
         C = exp(-d^2/(2*s^2));
     else
-        C = 0;
+        C = 0.0001;
     end
 end
 
