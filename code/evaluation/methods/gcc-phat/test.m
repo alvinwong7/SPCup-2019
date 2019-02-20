@@ -5,7 +5,7 @@ cost = zeros(length(theta),length(phi));
 
 for i = 1:length(theta)
     for j = 1:length(phi)
-        cost(i,j) = transition(0,0,theta(i),phi(j),0.1);
+        cost(i,j) = transition2(0,0,theta(i),phi(j),0.1,25);
     end
 end
 
