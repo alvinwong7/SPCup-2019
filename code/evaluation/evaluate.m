@@ -41,10 +41,10 @@ for i=1:numel(folders)
     files = dir(fullfile(folders(i).folder,folders(i).name,'*.wav'));
     load(fullfile(folders(i).folder,folders(i).name,'sourceData.mat'));
     methodDOA = [];
-    for k = 1:numel(files)
+    for k = 1:1
         fileName = [int2str(k) '.wav'];
         [data,Fs] = audioread(fullfile(files(k).folder,fileName));
-        methodDOA = [methodDOA; method(data,Fs,args)];
+        methodDOA = [methodDOA; method(data,Fs,args, sourceData)];
         disp(['Folder [',num2str(i),'/',num2str(numel(folders)),']']);
         disp(['File [',num2str(k),'/',num2str(numel(files)),']']);
     end

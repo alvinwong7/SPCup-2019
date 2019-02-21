@@ -19,9 +19,9 @@ clc
 
 %% PATHs
 DATA = 'flight'; % static or flight
-PATH_DATA = [fileparts(pwd) '\data\new_data\dev_static_speech\'];
+PATH_DATA = [fileparts(pwd) '\data\new_data\speech\'];
 
-PATH_AUDIO = [PATH_DATA '-10\'];
+PATH_AUDIO = [PATH_DATA '-13\'];
 PATH_GT = PATH_DATA;
 
 % add MBSSLocate toolbox to the current matlab session
@@ -171,11 +171,11 @@ for j = 1:J
         % here you should write your own code
         
             
-%         wienerRefSignal = zeros(10*fs, n_chan);
-%         for i = 3:4
-%             wienerRefSignalTemp = audioread([fileparts(pwd) + "\data\individual_motors_cut\Motor" + i + "_50.wav"]);
-%             wienerRefSignal = wienerRefSignal(1:10*fs, :) + wienerRefSignalTemp(1:10*fs, :);
-%         end
+        wienerRefSignal = zeros(10*fs, n_chan);
+        for i = 3:4
+            wienerRefSignalTemp = audioread([fileparts(pwd) + "\data\individual_motors_cut\Motor" + i + "_50.wav"]);
+            wienerRefSignal = wienerRefSignal(1:10*fs, :) + wienerRefSignalTemp(1:10*fs, :);
+        end
 
         [azEst, elEst, specGlobal, ~, ~] = ...
             MBSS_locate_spec(wav_frame,wienerRefSignal,sMBSSParam);

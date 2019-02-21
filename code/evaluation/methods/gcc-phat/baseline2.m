@@ -1,4 +1,4 @@
-function DOA = baseline(wavforms,fs_wav,params)
+function DOA = baseline(wavforms,fs_wav,params, sourceData)
 %% PATHs
 data = char(params{1});
 if contains(data, 'flight')
@@ -57,14 +57,14 @@ sceneTimeStamps = []; % Both array and sources are statics => no time stamps
 % localization method
 angularSpectrumMeth        = 'GCC-PHAT'; % Local angular spectrum method {'GCC-PHAT' 'GCC-NONLIN' 'MVDR' 'MVDRW' 'DS' 'DSW' 'DNM'}
 pooling                    = 'max';      % Pooling method {'max' 'sum'}
-applySpecInstNormalization = 0;          % 1: Normalize instantaneous local angular spectra - 0: No normalization
+applySpecInstNormalization = 1;          % 1: Normalize instantaneous local angular spectra - 0: No normalization
 % Search space
 azBound                    = [-179 180]; % Azimuth search boundaries ((degree))
 elBound                    = [-90   10]; % Elevation search boundaries ((degree))
 gridRes                    = 1;          % Resolution (degree) of the global 3D reference system {azimuth,elevation}
 alphaRes                   = 5;          % Resolution (degree) of the 2D reference system defined for each microphone pair
 % Multiple sources parameters
-nsrce                      = 6;          % Number of sources to be detected
+nsrce                      = 12;          % Number of sources to be detected
 minAngle                   = 10;         % Minimum angle between peaks
 % Moving sources parameters
 blockDuration_sec          = [];         % Block duration in seconds (default []: one block for the whole signal)
@@ -117,19 +117,20 @@ for t = 1:T
     sources(t,:,1) = azEst;
     sources(t,:,2) = elEst;
 
-%     test = reshape(specGlobal, [360,101]);
-%     figure
-%     surf(sMBSSParam.azimuth, sMBSSParam.elevation, test(:,:)','EdgeColor','none')
-%     axis xy; axis tight; colormap(jet); view(0,90);
-%     hold on
+    test = reshape(specGlobal, [360,101]);
+    figure
+    surf(sMBSSParam.azimuth, sMBSSParam.elevation, test(:,:)','EdgeColor','none')
+    axis xy; axis tight; colormap(jet); view(0,90);
+    hold on
 
-%     %for multiple sources
-%     for i = 1:length(azEst)
-%         scatter3(azEst(1,i),elEst(1,i),1, 'kx','lineWidth',2);
-%     end
-%     %fileToPlot = load([PATH_AUDIO 'sourceData.mat']);
-%     %scatter3(fileToPlot.sourceData(j,1),fileToPlot.sourceData(j,2), test(round(fileToPlot.sourceData(J,2)+91),round(fileToPlot.sourceData(1,1)+180))+5000, 'kx','lineWidth',2);   
-%     hold off
+%   for multiple sources
+    for i = 1:length(azEst)
+        scatter3(azEst(1,i),elEst(1,i),1, 'kx','lineWidth',2);
+    end
+    %fileToPlot = load([fileparts(pwd) '\data\new_data\flight_real_\sourceData.mat']);
+    scatter3(sourceData(t+(J-1)*15,1),sourceData(t+(J-1)*15,2), 1, 'gx','lineWidth',2);
+    %test(round(fileToPlot.sourceData(J,2)+91),round(fileToPlot.sourceData(1,1)+180))+5000
+    hold off
 
 end
 
