@@ -8,7 +8,7 @@ function [refSignal] = find_ref_Signal(speeds, motor_nums, fs, ref_time_length)
         if speeds(i) > 50 && speeds(i) < 90
             lower_speed = floor(speeds(i)/10)*10;
             higher_speed = lower_speed+10;
-            lower_weight = (speeds(i)-floor(speeds(i)/10)*10)/10;
+            lower_weight = speeds(i)/10 - floor(speeds(i)/10);
             higher_weight = 1-lower_speed;
         end
         
