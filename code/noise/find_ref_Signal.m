@@ -12,18 +12,18 @@ function [refSignal] = find_ref_Signal(speeds, motor_nums, fs, ref_time_length)
             higher_weight = 1-lower_speed;
         end
         
-        for j = motor_nums
+        for j = 1:length(motor_nums)
             if speeds(i) > 50 && speeds(i) < 90
-                lower_MotorNoiseFile = ["..\individual_motors_recordings\" + "Motor" + num2str(j) + "_" + num2str(lower_speed) + ".wav"];
+                lower_MotorNoiseFile = ["..\individual_motors_recordings\" + "Motor" + num2str(motor_nums(j)) + "_" + num2str(lower_speed) + ".wav"];
                 [m1,~] = audioread(lower_MotorNoiseFile);
 
-                higher_MotorNoiseFile = ["..\individual_motors_recordings\" + "Motor" + num2str(j) + "_" + num2str(higher_speed) + ".wav"];
+                higher_MotorNoiseFile = ["..\individual_motors_recordings\" + "Motor" + num2str(motor_nums(j)) + "_" + num2str(higher_speed) + ".wav"];
                 [m2,~] = audioread(higher_MotorNoiseFile);
                 noise_sum = m1*lower_weight + m2*higher_weight;
                 refSignal(i,:) = refSignal(i,:) + noise_sum(1:fs*ref_time_length); %weighted sum of the motor noise
             else
                 % i.e. speeds(i) == 50 or 90
-                MotorNoiseFile = ["..\individual_motors_recordings\" + "Motor" + num2str(j) + "_" + num2str(speed(i)) + ".wav"];
+                MotorNoiseFile = ["..\individual_motors_recordings\" + "Motor" + num2str(motor_nums(j)) + "_" + num2str(speed(i)) + ".wav"];
                 [m,~] = audioread(MotorNoiseFile);
                 refSignal(i,:) = refSignal(i,:) + m(1:fs*ref_time_length);
             end
