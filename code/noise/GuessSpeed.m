@@ -11,12 +11,25 @@
             MagPeakPositions(k) = find(max(mags) == mags,1);
         end
         speeds = MagPeakPositions/size(InputSignals,1)*fs;
+        
+        % We want the guessed speed to always be in the range of [50,90], this still needs more effective methods!
         for c = 1:length(speeds)
-            while speeds(c) > 90
-                speeds(c) = speeds(c) / 2;
-            end
-            while speeds(c) < 50
-                speeds(c) = speeds(c) * 2;
+            if speed(c) > 50 && speed(c) < 90
+                continue;
+            else
+                while speed(c) <= 45
+                    speed(c) = speed(c) * 2;
+                    continue;
+                end
+                while speed(c) >= 100
+                    speed(c) = speed(c) / 2;
+                end
+                if speed(c) > 45
+                    speed(c) = 50;
+                else
+                    % i.e. [90, 100)
+                    speed(c) = 90;
+                end
             end
         end
         %speeds = round(speeds/10)*10;
