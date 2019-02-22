@@ -64,7 +64,7 @@ elBound                    = [-90   10]; % Elevation search boundaries ((degree)
 gridRes                    = 1;          % Resolution (degree) of the global 3D reference system {azimuth,elevation}
 alphaRes                   = 5;          % Resolution (degree) of the 2D reference system defined for each microphone pair
 % Multiple sources parameters
-nsrce                      = 12;          % Number of sources to be detected
+nsrce                      = 10;          % Number of sources to be detected
 minAngle                   = 10;         % Minimum angle between peaks
 % Moving sources parameters
 blockDuration_sec          = [];         % Block duration in seconds (default []: one block for the whole signal)
@@ -108,7 +108,13 @@ for t = 1:T
     end
 
     wav_frame = wavforms(frame_start:frame_end,:); % nsampl x nchan
-
+    
+    %wienerRefSignal = zeros(10*fs, n_chan);
+    %motor_nums = 1:4;
+    %ref_time_length = 10;
+    %speeds = GuessSpeed(wav_frame, fs);
+    %wienerRefSignal = find_ref_Signal(speeds, motor_nums, fs, ref_time_length);
+    
     % Run the localization method
     % here you should write your own code
     [azEst, elEst, specGlobal, ~, ~] = ...
@@ -117,23 +123,23 @@ for t = 1:T
     sources(t,:,1) = azEst;
     sources(t,:,2) = elEst;
 
-    test = reshape(specGlobal, [360,101]);
-    figure
-    surf(sMBSSParam.azimuth, sMBSSParam.elevation, test(:,:)','EdgeColor','none')
-    axis xy; axis tight; colormap(jet); view(0,90);
-    hold on
+    specGlobal2D = reshape(specGlobal, [360,101]);
+%     figure
+%     surf(sMBSSParam.azimuth, sMBSSParam.elevation, test(:,:)','EdgeColor','none')
+%     axis xy; axis tight; colormap(jet); view(0,90);
+%     hold on
 
 %   for multiple sources
-    for i = 1:length(azEst)
-        scatter3(azEst(1,i),elEst(1,i),1, 'kx','lineWidth',2);
-    end
+%     for i = 1:length(azEst)
+%         scatter3(azEst(1,i),elEst(1,i),1, 'kx','lineWidth',2);
+%     end
     %fileToPlot = load([fileparts(pwd) '\data\new_data\flight_real_\sourceData.mat']);
-    scatter3(sourceData(t+(J-1)*15,1),sourceData(t+(J-1)*15,2), 1, 'gx','lineWidth',2);
+    %scatter3(sourceData(t+(J-1)*15,1),sourceData(t+(J-1)*15,2), 1, 'gx','lineWidth',2);
     %test(round(fileToPlot.sourceData(J,2)+91),round(fileToPlot.sourceData(1,1)+180))+5000
-    hold off
+    %hold off
 
     for i = 1:length(azEst)
-        emission(t, i) = test(azEst(i)+180,elEst(i)+91);
+        emission(t, i) = specGlobal2D(azEst(i)+180,elEst(i)+91);
     end
 end
 
