@@ -132,9 +132,12 @@ for t = 1:T
     %test(round(fileToPlot.sourceData(J,2)+91),round(fileToPlot.sourceData(1,1)+180))+5000
     hold off
 
+    for i = 1:length(azEst)
+        emission(t, i) = test(azEst(i)+180,elEst(i)+91);
+    end
 end
 
-[total, argmax, valmax, P] = viterbi(T, sources);
+[total, argmax, valmax, P] = viterbi(T, sources, emission);
 pred = [];
 
 for t = 1:T

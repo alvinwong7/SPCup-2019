@@ -202,11 +202,11 @@ for block_idx = 1 : nblocks
     specInst = MBSS_computeAngularSpectrum(sMBSSParam.angularSpectrumMeth,sMBSSParam.angularSpectrumDebug,aggregationParam,X_current,sMBSSParam.f,sMBSSParam.freqBins);
     
     % Normalize instantaneous local angular spectra if requested
-%     [~,nFrames,~] = size(specInst);
-%     for i=1:nFrames
-%         minVal = min(min(specInst(:,i)));
-%         specInst(:,i)=(specInst(:,i) - minVal)/ max(max(specInst(:,i)- minVal));
-%     end
+    [~,nFrames,~] = size(specInst);
+    for i=1:nFrames
+        minVal = min(min(specInst(:,i)));
+        specInst(:,i)=(specInst(:,i) - minVal)/ max(max(specInst(:,i)- minVal));
+    end
 
     % Pooling
     switch sMBSSParam.pooling

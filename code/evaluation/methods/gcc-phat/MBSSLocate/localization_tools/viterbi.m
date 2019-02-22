@@ -1,8 +1,8 @@
-function [total, argmax, valmax, P] = viterbi(obs, states)
+function [total, argmax, valmax, P] = viterbi(obs, states, emission)
     T = {};
     for output = 1:obs
         for state = 1:length(states(1,:,:))
-            T{output,state} = {log(1),state,log(1)};
+            T{output,state} = {log(1),state,emission(output,state)};
         end
     end
     for output = 2:obs
