@@ -53,6 +53,18 @@ for i=1:numel(folders)
     correct_elevation(i,:) = abs(sourceData(:,2) - DOA(i,:,2)') < 10;
     error_azimuth(i) = mean((sourceData(:,1) - DOA(i,:,1)').^2);
     error_elevation(i) = mean((sourceData(:,2) - DOA(i,:,2)').^2);
+    
+%     if contains(testType, 'flight')
+%         for k = 1:numel(files)
+%             figure
+%             hold on
+%             for j = 1:15
+%                 plot3(0.25*(j-1), DOA(i,j+15*(k-1),1), DOA(i,j+15*(k-1),2), '-x','lineWidth',2);
+%             end
+%             hold off
+%         end
+%     end
+    
 end
 
 [SNR,order] = sort(SNR);

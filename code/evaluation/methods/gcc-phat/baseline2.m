@@ -124,19 +124,24 @@ for t = 1:T
     sources(t,:,2) = elEst;
 
     specGlobal2D = reshape(specGlobal, [360,101]);
-%     figure
-%     surf(sMBSSParam.azimuth, sMBSSParam.elevation, test(:,:)','EdgeColor','none')
-%     axis xy; axis tight; colormap(jet); view(0,90);
-%     hold on
+    
+    figure
+    surf(sMBSSParam.azimuth, sMBSSParam.elevation, specGlobal2D(:,:)','EdgeColor','none')
+    axis xy; axis tight; colormap(jet); view(0,90);
+    hold on
 
-%   for multiple sources
-%     for i = 1:length(azEst)
-%         scatter3(azEst(1,i),elEst(1,i),1, 'kx','lineWidth',2);
-%     end
+    %for multiple sources
+    for i = 1:length(azEst)
+        scatter3(azEst(1,i),elEst(1,i),1, 'kx','lineWidth',2);
+    end
+    
+    %plots the source
     %fileToPlot = load([fileparts(pwd) '\data\new_data\flight_real_\sourceData.mat']);
-    %scatter3(sourceData(t+(J-1)*15,1),sourceData(t+(J-1)*15,2), 1, 'gx','lineWidth',2);
+    scatter3(sourceData(t+(J-1)*15,1),sourceData(t+(J-1)*15,2), 1, 'gx','lineWidth',2);
     %test(round(fileToPlot.sourceData(J,2)+91),round(fileToPlot.sourceData(1,1)+180))+5000
-    %hold off
+    
+    savefig("angularSpectrum" + t + ".fig");
+    hold off
 
     for i = 1:length(azEst)
         emission(t, i) = specGlobal2D(azEst(i)+180,elEst(i)+91);
@@ -146,8 +151,13 @@ end
 [total, argmax, valmax, P] = viterbi(T, sources, emission);
 pred = [];
 
+close all
 for t = 1:T
     pred = [pred; sources(t,argmax(t),1) sources(t,argmax(t),2)];
+    openfig("angularSpectrum" + t + ".fig");
+    hold on
+    scatter3(sources(t,argmax(t),1),sources(t,argmax(t),2), 1, 'o','lineWidth',2);
+    hold off
 end
 
 DOA = [DOA pred];
