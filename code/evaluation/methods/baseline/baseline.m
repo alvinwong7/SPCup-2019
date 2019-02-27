@@ -1,4 +1,4 @@
-function DOA = baseline(wavforms,fs_wav,params, sourceData)
+function DOA = baseline(wavforms,fs_wav,params,sourceData)
 data = char(params{1});
 if contains(data, 'flight')
     J = 1;
@@ -114,7 +114,7 @@ end
         
         
         wienerRefSignal = zeros(10*fs, n_chan);
-        motor_nums = 4;
+        motor_nums = 1:4;
         ref_time_length = 10;
         %for i = 1:4
             speeds = GuessSpeed(wav_frame, fs);
