@@ -118,19 +118,19 @@ for t = 1:T
     sources(t,:,2) = elEst;
 
     test = reshape(specGlobal, [360,101]);
-    figure
-    surf(sMBSSParam.azimuth, sMBSSParam.elevation, test(:,:)','EdgeColor','none')
-    axis xy; axis tight; colormap(jet); view(0,90);
-    hold on
-
-%   for multiple sources
-    for i = 1:length(azEst)
-        scatter3(azEst(1,i),elEst(1,i),1, 'kx','lineWidth',2);
-    end
-    %fileToPlot = load([fileparts(pwd) '\data\new_data\flight_real_\sourceData.mat']);
-    scatter3(sourceData(t+(J-1)*15,1),sourceData(t+(J-1)*15,2), 1, 'gx','lineWidth',2);
-    %test(round(fileToPlot.sourceData(J,2)+91),round(fileToPlot.sourceData(1,1)+180))+5000
-    hold off
+%     figure
+%     surf(sMBSSParam.azimuth, sMBSSParam.elevation, test(:,:)','EdgeColor','none')
+%     axis xy; axis tight; colormap(jet); view(0,90);
+%     hold on
+% 
+% %   for multiple sources
+%     for i = 1:length(azEst)
+%         scatter3(azEst(1,i),elEst(1,i),1, 'kx','lineWidth',2);
+%     end
+%     %fileToPlot = load([fileparts(pwd) '\data\new_data\flight_real_\sourceData.mat']);
+%     scatter3(sourceData(t+(J-1)*15,1),sourceData(t+(J-1)*15,2), 1, 'gx','lineWidth',2);
+%     %test(round(fileToPlot.sourceData(J,2)+91),round(fileToPlot.sourceData(1,1)+180))+5000
+%     hold off
 
     for i = 1:length(azEst)
         emission(t, i) = test(azEst(i)+180,elEst(i)+91);
