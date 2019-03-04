@@ -1,4 +1,4 @@
-function DOA = baseline(wavforms,fs_wav,params,sourceData)
+function DOA = baseline(wavforms,fs_wav,params,sourceData, fileNum)
 data = char(params{1});
 if contains(data, 'flight')
     J = 1;
@@ -61,7 +61,7 @@ end
     % localization method
     angularSpectrumMeth        = 'GCC-PHAT'; % Local angular spectrum method {'GCC-PHAT' 'GCC-NONLIN' 'MVDR' 'MVDRW' 'DS' 'DSW' 'DNM'}
     pooling                    = 'max';      % Pooling method {'max' 'sum'}
-    applySpecInstNormalization = 0;          % 1: Normalize instantaneous local angular spectra - 0: No normalization
+    applySpecInstNormalization = 1;          % 1: Normalize instantaneous local angular spectra - 0: No normalization
     % Search space
     azBound                    = [-179 180]; % Azimuth search boundaries ((degree))
     elBound                    = [-90   10]; % Elevation search boundaries ((degree))
@@ -74,7 +74,7 @@ end
     blockDuration_sec          = [];         % Block duration in seconds (default []: one block for the whole signal)
     blockOverlap_percent       = [];         % Requested block overlap in percent (default []: No overlap) - is internally rounded to suited values
     % Wiener filtering
-    enableWienerFiltering      = 1;          % 1: Process a Wiener filtering step in order to attenuate / emphasize the provided excerpt signal into the mixture signal. 0: Disable Wiener filtering
+    enableWienerFiltering      = 0;          % 1: Process a Wiener filtering step in order to attenuate / emphasize the provided excerpt signal into the mixture signal. 0: Disable Wiener filtering
     wienerMode                 = [];         % Wiener filtering mode {'[]' 'Attenuation' 'Emphasis'}
     wienerRefSignal            = [];         % Excerpt of the source(s) to be emphasized or attenuated
     % Display results
@@ -112,13 +112,13 @@ end
 
         wav_frame = wavforms(frame_start:frame_end,:); % nsampl x nchan
         
-        
-        wienerRefSignal = zeros(10*fs, n_chan);
-        motor_nums = 1:4;
-        ref_time_length = 10;
+%         wav_frame = highpass(wav_frame, 1000 ,fs);
+%         wienerRefSignal = zeros(10*fs, n_chan);
+%         motor_nums = 1:4;
+%         ref_time_length = 10;
         %for i = 1:4
-            speeds = GuessSpeed(wav_frame, fs);
-            wienerRefSignal = find_ref_Signal(speeds, motor_nums, fs, ref_time_length);
+            %speeds = GuessSpeed(wav_frame, fs);
+            %wienerRefSignal = find_ref_Signal(speeds, motor_nums, fs, ref_time_length);
             %wienerRefSignalTemp = audioread([fileparts(pwd) + "\data\individual_motors_cut\Motor" + i + "_50.wav"]);
             %wienerRefSignal = wienerRefSignal(1:10*fs, :) + wienerRefSignalTemp(1:10*fs, :);
         %end
@@ -128,20 +128,20 @@ end
         [azEst, elEst, specGlobal, ~, ~] = ...
             MBSS_locate_spec(wav_frame,wienerRefSignal,sMBSSParam);
 
-%             test = reshape(specGlobal, [360,101]);
-%             figure
-%             surf(sMBSSParam.azimuth, sMBSSParam.elevation, test(:,:)','EdgeColor','none')
-%             axis xy; axis tight; colormap(jet); view(0,90);
-            %hold on
+        specGlobal2D = reshape(specGlobal, [360,101]);
+        figure
+        surf(sMBSSParam.azimuth, sMBSSParam.elevation, specGlobal2D(:,:)','EdgeColor','none')
+        axis xy; axis tight; colormap(jet); view(0,90);
+        hold on
         
         %   for multiple sources
-            %for i = 1:length(azEst)
-            %    scatter3(azEst(1,i),elEst(1,i),1, 'kx','lineWidth',2);
-            %end
+        for i = 1:length(azEst)
+           scatter3(azEst(1,i),elEst(1,i),5000, 'kx','lineWidth',2);
+        end
             %fileToPlot = load([fileparts(pwd) '\data\new_data\flight_real_\sourceData.mat']);
-            %scatter3(sourceData(t+(J-1)*15,1),sourceData(t+(J-1)*15,2), 1, 'gx','lineWidth',2);
+        scatter3(sourceData(t+(fileNum-1)*15,1),sourceData(t+(fileNum-1)*15,2), 5000, 'ko','lineWidth',2);
             %test(round(fileToPlot.sourceData(J,2)+91),round(fileToPlot.sourceData(1,1)+180))+5000
-            %hold off
+        hold off
         
         % Printing for the development
         if development

@@ -1,4 +1,4 @@
-function DOA = baseline(wavforms,fs_wav,params, sourceData)
+function DOA = baseline(wavforms,fs_wav,params, sourceData, fileNum)
 %% PATHs
 data = char(params{1});
 if contains(data, 'flight')
@@ -10,6 +10,8 @@ else
     T = 1;
     DATA = 'static';
 end
+
+plotting = 0;
 
 % add MBSSLocate toolbox to the current matlab session
 addpath(genpath('./MBSSLocate/'));
@@ -70,7 +72,7 @@ minAngle                   = 10;         % Minimum angle between peaks
 blockDuration_sec          = [];         % Block duration in seconds (default []: one block for the whole signal)
 blockOverlap_percent       = [];         % Requested block overlap in percent (default []: No overlap) - is internally rounded to suited values
 % Wiener filtering
-enableWienerFiltering      = 0;          % 1: Process a Wiener filtering step in order to attenuate / emphasize the provided excerpt signal into the mixture signal. 0: Disable Wiener filtering
+enableWienerFiltering      = 1;          % 1: Process a Wiener filtering step in order to attenuate / emphasize the provided excerpt signal into the mixture signal. 0: Disable Wiener filtering
 wienerMode                 = [];         % Wiener filtering mode {'[]' 'Attenuation' 'Emphasis'}
 wienerRefSignal            = [];         % Excerpt of the source(s) to be emphasized or attenuated
 % Display results
@@ -109,11 +111,14 @@ for t = 1:T
 
     wav_frame = wavforms(frame_start:frame_end,:); % nsampl x nchan
     
-    %wienerRefSignal = zeros(10*fs, n_chan);
-    %motor_nums = 1:4;
-    %ref_time_length = 10;
-    %speeds = GuessSpeed(wav_frame, fs);
-    %wienerRefSignal = find_ref_Signal(speeds, motor_nums, fs, ref_time_length);
+    if enableWienerFiltering == 1
+        wav_frame = highpass(wav_frame, 1000 ,fs);
+        wienerRefSignal = zeros(10*fs, n_chan);
+        motor_nums = 1:4;
+        ref_time_length = 10;
+        speeds = GuessSpeed(wav_frame, fs);
+        wienerRefSignal = find_ref_Signal(speeds, motor_nums, fs, ref_time_length);
+    end
     
     % Run the localization method
     % here you should write your own code
@@ -125,24 +130,26 @@ for t = 1:T
 
     specGlobal2D = reshape(specGlobal, [360,101]);
     
-    figure
-    surf(sMBSSParam.azimuth, sMBSSParam.elevation, specGlobal2D(:,:)','EdgeColor','none')
-    axis xy; axis tight; colormap(jet); view(0,90);
-    hold on
+    if plotting == 1
+        figure
+        surf(sMBSSParam.azimuth, sMBSSParam.elevation, specGlobal2D(:,:)','EdgeColor','none')
+        axis xy; axis tight; colormap(jet); view(0,90);
+        hold on
 
-    %for multiple sources
-    for i = 1:length(azEst)
-        scatter3(azEst(1,i),elEst(1,i),1, 'kx','lineWidth',2);
+        %for multiple sources
+        for i = 1:length(azEst)
+            scatter3(azEst(1,i),elEst(1,i),1, 'kx','lineWidth',2);
+        end
+    
+        %plots the source
+        %fileToPlot = load([fileparts(pwd) '\data\new_data\flight_real_\sourceData.mat']);
+        %scatter3(sourceData(t+(fileNum-1)*15,1),sourceData(t+(fileNum-1)*15,2), 1, 'gx','lineWidth',2);
+        %test(round(fileToPlot.sourceData(J,2)+91),round(fileToPlot.sourceData(1,1)+180))+5000
+
+        savefig("angularSpectrum" + t + ".fig");
+        hold off
     end
     
-    %plots the source
-    %fileToPlot = load([fileparts(pwd) '\data\new_data\flight_real_\sourceData.mat']);
-    scatter3(sourceData(t+(J-1)*15,1),sourceData(t+(J-1)*15,2), 1, 'gx','lineWidth',2);
-    %test(round(fileToPlot.sourceData(J,2)+91),round(fileToPlot.sourceData(1,1)+180))+5000
-    
-    savefig("angularSpectrum" + t + ".fig");
-    hold off
-
     for i = 1:length(azEst)
         emission(t, i) = specGlobal2D(azEst(i)+180,elEst(i)+91);
     end
@@ -154,12 +161,21 @@ pred = [];
 close all
 for t = 1:T
     pred = [pred; sources(t,argmax(t),1) sources(t,argmax(t),2)];
-    openfig("angularSpectrum" + t + ".fig");
-    hold on
-    scatter3(sources(t,argmax(t),1),sources(t,argmax(t),2), 1, 'o','lineWidth',2);
-    hold off
+    if plotting == 1
+        openfig("angularSpectrum" + t + ".fig");
+        hold on
+        scatter3(sources(t,argmax(t),1),sources(t,argmax(t),2), 1, 'o','lineWidth',2);
+        hold off
+        savefig("angularSpectrum" + t + ".fig");
+        close all
+    end
 end
 
+if plotting == 1
+    for t = 1:T
+        openfig("angularSpectrum" + t + ".fig");
+    end
+end
 DOA = [DOA pred];
 
 fprintf('\n')

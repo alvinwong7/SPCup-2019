@@ -215,7 +215,7 @@ for block_idx = 1 : nblocks
         case 'sum'
             specGlobal = shiftdim(sum(specInst,2));
     end
-        
+      
     [pfEstAngles,figHandle] = MBSS_findPeaks2D(figHandle,specGlobal, sMBSSParam.azimuth, sMBSSParam.elevation, sMBSSParam.azimuthGrid, sMBSSParam.elevationGrid, sMBSSParam.nsrc, sMBSSParam.minAngle, sMBSSParam.angularSpectrumMeth, sMBSSParam.specDisplay);
     nSrcFound = size(pfEstAngles,1);
     
