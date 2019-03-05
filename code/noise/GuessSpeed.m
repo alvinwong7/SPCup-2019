@@ -31,8 +31,10 @@ function [speeds] = GuessSpeed(InputSignals, fs)
                     peak = sorted_mags(counter);
                     index = find(mags == peak, 1);
                     speed = index/size(InputSignals,1)*fs;
+                    if speed < 50 || speed > 90
+                        continue;
+                    end
                     if abs(speed - most) < 15
-                    
                         break;
                     end
                 end
