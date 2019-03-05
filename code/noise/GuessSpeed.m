@@ -21,9 +21,9 @@ function [speeds] = GuessSpeed(InputSignals, fs)
         end
         
         ten_digits = round(speeds/10);
-        most = mode(ten_digits * 10);
+        most = mode(ten_digits)*10;
         for i = 1:length(speeds)
-            if abs(speeds(i) - most) >= 20
+            if abs(speeds(i) - most) >= 15
                 % This is an error estimation, re do it again
                 mags = abs(fft(InputSignals(:,k)));
                 sorted_mags = sort(mags, 'descend');
@@ -31,10 +31,12 @@ function [speeds] = GuessSpeed(InputSignals, fs)
                     peak = sorted_mags(counter);
                     index = find(mags == peak, 1);
                     speed = index/size(InputSignals,1)*fs;
-                    if abs(speed - most) < 20
+                    if abs(speed - most) < 15
+                    
                         break;
                     end
                 end
+                speeds(i) = speed;
             end
         end
         
