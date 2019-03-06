@@ -5,6 +5,7 @@ function [refSignal] = find_ref_Signal2(speeds, fs, ref_time_length)
 %         8 channels are assumed to be same, although not very convictive
 
     min_samples = ref_time_length * fs;
+    ref = zeros(min_samples,8);
     for i = 1:4 % 4 motor's speeds
         lower_speed = floor(speeds(i)/10)*10;
         higher_speed = lower_speed+10;
