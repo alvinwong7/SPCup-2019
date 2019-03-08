@@ -64,20 +64,22 @@ for j = 1:3
     for k = 1:numel(files)
         fileName = [int2str(k) '.wav'];
         [data,Fs] = audioread(fullfile(files(k).folder,fileName));
-        methodDOA = [methodDOA; baseline2(data,Fs,args,0,k)];
+        methodDOA = baseline2(data,Fs,args,0,k);
         disp(['Folder [',num2str(i),'/',num2str(numel(files)),']']);
         disp(['File [',num2str(k),'/',num2str(numel(files)),']']);
-    end
-    switch j
-        case 1
-            static_azimuth = [static_azimuth methodDOA(:,1)];
-            static_elevation = [static_elevation methodDOA(:,2)];
-        case 2
-            broadband_azimuth = [broadband_azimuth methodDOA(:,1)];
-            broadband_elevation = [broadband_elevation methodDOA(:,2)];
-        case 3
-            speech_azimuth = [speech_azimuth methodDOA(:,1)];
-            speech_elevation = [speech_elevation methodDOA(:,2)];
+        switch j
+            case 1
+                static_azimuth = [static_azimuth methodDOA(:,1)];
+                static_elevation = [static_elevation methodDOA(:,2)];
+            case 2
+                broadband_azimuth = [broadband_azimuth; methodDOA(:,1)];
+                broadband_elevation = [broadband_elevation; methodDOA(:,2)];
+            case 3
+                speech_azimuth = [speech_azimuth; methodDOA(:,1)];
+                speech_elevation = [speech_elevation; methodDOA(:,2)];
+        end
     end
 end
+save('SPCUP19_static.mat', static_azimuth, static_elevation);
+save('SPCUP19_flight.mat', speech_azimuth, speech_elevation, broadband_azimuth, broadband_elevation);
 end
