@@ -116,8 +116,11 @@ for t = 1:T
         wienerRefSignal = zeros(10*fs, n_chan);
         motor_nums = 1:4;
         ref_time_length = 10;
-        speeds = GuessSpeed(wav_frame, fs);
+        speeds = OldGuessSpeed(wav_frame, fs);
         wienerRefSignal = find_ref_Signal(speeds, motor_nums, fs, ref_time_length);
+        %speeds = broadband_flight_motor_speed(fileNum, t, :); 
+        %speeds = reshape(speeds, [1, 4]);
+        %wienerRefSignal = find_ref_Signal2(speeds, fs, ref_time_length);
     end
     
     % Run the localization method
