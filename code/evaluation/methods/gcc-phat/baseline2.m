@@ -158,7 +158,7 @@ for t = 1:T
     end
 end
 
-[total, argmax, valmax, P] = viterbi(T, sources, emission);
+[total, argmax, valmax] = viterbi(T, sources, emission);
 pred = [];
 
 close all
