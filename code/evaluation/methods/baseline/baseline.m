@@ -59,7 +59,7 @@ end
                           % thus MBSSLocate's tracking function is Sdisabled
 
     % localization method
-    angularSpectrumMeth        = 'GCC-PHAT'; % Local angular spectrum method {'GCC-PHAT' 'GCC-NONLIN' 'MVDR' 'MVDRW' 'DS' 'DSW' 'DNM'}
+    angularSpectrumMeth        = 'GCC-NONLIN'; % Local angular spectrum method {'GCC-PHAT' 'GCC-NONLIN' 'MVDR' 'MVDRW' 'DS' 'DSW' 'DNM'}
     pooling                    = 'max';      % Pooling method {'max' 'sum'}
     applySpecInstNormalization = 1;          % 1: Normalize instantaneous local angular spectra - 0: No normalization
     % Search space
