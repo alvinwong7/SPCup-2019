@@ -1,4 +1,4 @@
-function [total, argmax, valmax, P] = viterbi(obs, states, emission)
+function [total, argmax, valmax] = viterbi(obs, states, emission)
     T = {};
     for output = 1:obs
         for state = 1:length(states(1,:,:))
@@ -21,7 +21,6 @@ function [total, argmax, valmax, P] = viterbi(obs, states, emission)
                 p = log(transition3(source_az, source_el, next_az, next_el, 0.1,25));
                 prob = prob + p;
                 v_prob = v_prob + p;
-                P(output-1,next_state,source_state) = p;
                 total = total + prob;
                 if v_prob > valmax
                     argmax = [v_path, next_state];

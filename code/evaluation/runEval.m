@@ -24,11 +24,17 @@ methodName = 'baseline2';
 testType = 'flight_real';
 method = str2func(methodName);
 
-if contains(methodName,'baseline');
+final = 1;
+
+if contains(methodName,'baseline')
     args{1} = testType;
 else
     args = 0;
 end
 
 addpath(genpath(fileparts(pwd)));
-evaluate(method,args,testType);
+if final
+    submission();
+else
+    evaluate(method,args,testType);
+end
