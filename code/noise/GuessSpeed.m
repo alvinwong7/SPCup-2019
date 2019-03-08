@@ -8,6 +8,7 @@ function [speeds] = GuessSpeed(InputSignals, fs)
         speeds = zeros(1,n);
         for k = 1:n
             mags = abs(fft(InputSignals(:,k)));
+            mags = mags(1:round(length(mags)/2));
             sorted_mags = sort(mags, 'descend');
             for counter = 1:length(sorted_mags)
                 peak = sorted_mags(counter);
