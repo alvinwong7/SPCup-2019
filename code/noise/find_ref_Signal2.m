@@ -10,7 +10,7 @@ function [refSignal] = find_ref_Signal2(speeds, fs, ref_time_length)
         lower_speed = floor(speeds(i)/10)*10;
         higher_speed = lower_speed+10;
         lower_weight = speeds(i)/10 - floor(speeds(i)/10);
-        higher_weight = 1-lower_speed;
+        higher_weight = 1-lower_weight;
         
         
         lower_MotorNoiseFile = ["../data/individual_motors_cut/" + "Motor" + num2str(i) + "_" + num2str(lower_speed) + ".wav"];
