@@ -75,6 +75,6 @@ for j = 1:3
         end
     end
 end
-save('SPCUP19_static.mat', static_azimuth, static_elevation);
-save('SPCUP19_flight.mat', speech_azimuth, speech_elevation, broadband_azimuth, broadband_elevation);
+save('SPCUP19_static.mat', 'static_azimuth', 'static_elevation');
+save('SPCUP19_flight.mat', 'speech_azimuth', 'speech_elevation', 'broadband_azimuth', 'broadband_elevation');
 end
