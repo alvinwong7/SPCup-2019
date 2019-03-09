@@ -37,7 +37,7 @@ for j = 1:3
 end
 static_azimuth = [];
 static_elevation = [];
-speech_azimunth = [];
+speech_azimuth = [];
 speech_elevation = [];
 broadband_azimuth = [];
 broadband_elevation = [];
@@ -54,18 +54,13 @@ for j = 1:3
             files = dirSpeech;
     end
     num_files = size(dir(fullfile(files(1).folder,files(1).name,'*.wav')),1);
-    if ~contains(files(1).folder, 'flight')
-        DOA = zeros(numel(files),num_files,2);
-    else
-        DOA = zeros(numel(files),num_files*15,2);
-    end
 
     methodDOA = [];
     for k = 1:numel(files)
         fileName = [int2str(k) '.wav'];
         [data,Fs] = audioread(fullfile(files(k).folder,fileName));
         methodDOA = baseline2(data,Fs,args,0,k);
-        disp(['Folder [',num2str(i),'/',num2str(numel(files)),']']);
+        disp(['Folder [',num2str(j),'/',num2str(3),']']);
         disp(['File [',num2str(k),'/',num2str(numel(files)),']']);
         switch j
             case 1
