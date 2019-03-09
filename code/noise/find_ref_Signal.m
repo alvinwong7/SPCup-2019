@@ -4,12 +4,13 @@ function [refSignal] = find_ref_Signal(speeds, motor_nums, fs, ref_time_length)
 % fs is sampling frequency, ref_time_length is the time length you want to take as Wiener reference
 
     refSignal = zeros(fs*ref_time_length,8);
+    start_samp = 10000; % Havn't used this, no need to do more fixes now
     for i = 1:length(speeds)
         if speeds(i) > 50 && speeds(i) < 90
             lower_speed = floor(speeds(i)/10)*10;
             higher_speed = lower_speed+10;
-            lower_weight = speeds(i)/10 - floor(speeds(i)/10);
-            higher_weight = 1-lower_speed;
+            higher_weight = speeds(i)/10 - floor(speeds(i)/10);
+            lower_weight = 1-higher_weight;
         end
         
         min_samples = ref_time_length * fs;
