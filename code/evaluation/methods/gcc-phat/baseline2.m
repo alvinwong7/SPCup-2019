@@ -1,4 +1,4 @@
-function DOA = baseline(wavforms,fs_wav,params, sourceData, fileNum)
+function DOA = baseline(wavforms,fs_wav,params, sourceData, fileNum, motor_speed)
 %% PATHs
 data = char(params{1});
 if contains(data, 'flight')
@@ -66,7 +66,7 @@ elBound                    = [-90   10]; % Elevation search boundaries ((degree)
 gridRes                    = 1;          % Resolution (degree) of the global 3D reference system {azimuth,elevation}
 alphaRes                   = 5;          % Resolution (degree) of the 2D reference system defined for each microphone pair
 % Multiple sources parameters
-nsrce                      = 10;          % Number of sources to be detected
+nsrce                      = 8;          % Number of sources to be detected
 minAngle                   = 10;         % Minimum angle between peaks
 % Moving sources parameters
 blockDuration_sec          = [];         % Block duration in seconds (default []: one block for the whole signal)
@@ -113,14 +113,15 @@ for t = 1:T
     
     if enableWienerFiltering == 1
         wav_frame = highpass(wav_frame, 1000 ,fs);
-        wienerRefSignal = zeros(10*fs, n_chan);
-        motor_nums = 1:4;
+        %wienerRefSignal = zeros(10*fs, n_chan);
+        %motor_nums = 1:4;
         ref_time_length = 10;
-        speeds = OldGuessSpeed(wav_frame, fs);
-        wienerRefSignal = find_ref_Signal(speeds, motor_nums, fs, ref_time_length);
+        %speeds = OldGuessSpeed(wav_frame, fs);
+        %wienerRefSignal = find_ref_Signal(speeds, motor_nums, fs, ref_time_length);
         %speeds = broadband_flight_motor_speed(fileNum, t, :); 
         %speeds = reshape(speeds, [1, 4]);
-        %wienerRefSignal = find_ref_Signal2(speeds, fs, ref_time_length);
+        speeds = [80 80 80 80];
+        wienerRefSignal = find_ref_Signal2(speeds, fs, ref_time_length);
     end
     
     % Run the localization method
@@ -154,11 +155,12 @@ for t = 1:T
     end
     
     for i = 1:length(azEst)
-        emission(t, i) = specGlobal2D(azEst(i)+180,elEst(i)+91);
+        %factor = (1 - (elEst(i) > 0)*elEst(i)/40);
+        emission(t, i) = specGlobal2D(azEst(i)+180,elEst(i)+91);%*factor;
     end
 end
 
-[total, argmax, valmax] = viterbi(T, sources, emission);
+[argmax, valmax] = viterbi2(T, sources, emission);
 pred = [];
 
 close all

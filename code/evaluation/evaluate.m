@@ -38,13 +38,15 @@ error_elevation = zeros(numel(folders),1);
 
 for i=1:numel(folders)
     SNR(i) = str2double(folders(i).name);
+    motor_speed = [];
+    %load(fullfile(folders(i).folder,folders(i).name,'static_motor_speed.mat'));
     files = dir(fullfile(folders(i).folder,folders(i).name,'*.wav'));
     load(fullfile(folders(i).folder,folders(i).name,'sourceData.mat'));
     methodDOA = [];
     for k = 1:numel(files)
         fileName = [int2str(k) '.wav'];
         [data,Fs] = audioread(fullfile(files(k).folder,fileName));
-        methodDOA = [methodDOA; method(data,Fs,args, sourceData, k)];
+        methodDOA = [methodDOA; method(data,Fs,args, sourceData, k, motor_speed)];
         disp(['Folder [',num2str(i),'/',num2str(numel(folders)),']']);
         disp(['File [',num2str(k),'/',num2str(numel(files)),']']);
     end
@@ -75,6 +77,7 @@ correct_elevation = correct_elevation(order,:);
 azimuth_acc = mean(correct_azimuth,2);
 elevation_acc = mean(correct_elevation,2);
 total_correct = correct_azimuth & correct_elevation;
+total_accuracy = mean(total_correct,2);
 
 score = sum(total_correct(:));
 
@@ -97,6 +100,9 @@ subplot(2,1,2);
 plot(SNR,elevation_acc,'-x','lineWidth',2);
 title('Elevation Accuracy vs SNR');
 
+figure;
+plot(SNR,total_accuracy,'-x','lineWidth',2);
+title('Total % Correct vs SNR');
 
 results_file = [func2str(method) '_' testType '_results.mat'];
 save(results_file,'SNR','error_azimuth','error_elevation','azimuth_acc', ...
