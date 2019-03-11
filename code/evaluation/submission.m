@@ -64,14 +64,14 @@ for j = 1:3
         disp(['File [',num2str(k),'/',num2str(numel(files)),']']);
         switch j
             case 1
-                static_azimuth = [static_azimuth methodDOA(:,1)];
-                static_elevation = [static_elevation methodDOA(:,2)];
+                static_azimuth = [static_azimuth; methodDOA(:,1)];
+                static_elevation = [static_elevation; methodDOA(:,2)];
             case 2
-                broadband_azimuth = [broadband_azimuth; methodDOA(:,1)];
-                broadband_elevation = [broadband_elevation; methodDOA(:,2)];
+                broadband_azimuth = [broadband_azimuth, methodDOA(:,1)];
+                broadband_elevation = [broadband_elevation, methodDOA(:,2)];
             case 3
-                speech_azimuth = [speech_azimuth; methodDOA(:,1)];
-                speech_elevation = [speech_elevation; methodDOA(:,2)];
+                speech_azimuth = [speech_azimuth, methodDOA(:,1)];
+                speech_elevation = [speech_elevation, methodDOA(:,2)];
         end
     end
 end
