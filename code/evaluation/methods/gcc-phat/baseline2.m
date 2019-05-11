@@ -112,16 +112,12 @@ for t = 1:T
     wav_frame = wavforms(frame_start:frame_end,:); % nsampl x nchan
     
     if enableWienerFiltering == 1
-        wav_frame = highpass(wav_frame, 1000 ,fs);
-        %wienerRefSignal = zeros(10*fs, n_chan);
-        %motor_nums = 1:4;
-        ref_time_length = 10;
-        %speeds = OldGuessSpeed(wav_frame, fs);
-        %wienerRefSignal = find_ref_Signal(speeds, motor_nums, fs, ref_time_length);
-        %speeds = broadband_flight_motor_speed(fileNum, t, :); 
-        %speeds = reshape(speeds, [1, 4]);
-        speeds = [80 80 80 80];
-        wienerRefSignal = find_ref_Signal2(speeds, fs, ref_time_length);
+       %wav_frame = highpass(wav_frame, 1000 ,fs);
+       ref_time_length = 10;
+       speeds = motor_speed(fileNum, t, :); 
+       speeds = reshape(speeds, [1, 4]);
+       %speeds = [80 80 80 80];
+       wienerRefSignal = find_ref_Signal2(speeds, fs, ref_time_length);
     end
     
     % Run the localization method
