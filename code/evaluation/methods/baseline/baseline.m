@@ -112,12 +112,12 @@ end
 
         wav_frame = wavforms(frame_start:frame_end,:); % nsampl x nchan
         
-        ref_time_length = 10;
+        ref_time_length = 8;
         %wienerRefSignal = find_ref_Signal(speeds, motor_nums, fs, ref_time_length);
         
         speeds = static_motor_speed(fileNum, :);
         %speeds = [80 80 80 80];
-        wienerRefSignal = find_ref_Signal2(speeds, fs, ref_time_length);
+        wienerRefSignal = find_ref_Signal3(speeds, fs, ref_time_length);
         
         % Run the localization method
         % here you should write your own code

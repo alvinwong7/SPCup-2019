@@ -3,7 +3,8 @@ function DOA = baseline(wavforms,fs_wav,params, sourceData, fileNum, motor_speed
 data = char(params{1});
 if contains(data, 'flight')
     J = 1;
-    T = 15;
+    %T = 15;
+    T = 79;
     DATA = 'flight';
 else
     J = 1;
@@ -11,7 +12,7 @@ else
     DATA = 'static';
 end
 
-plotting = 0;
+plotting = 1;
 
 % add MBSSLocate toolbox to the current matlab session
 addpath(genpath('./MBSSLocate/'));
@@ -66,7 +67,7 @@ elBound                    = [-90   10]; % Elevation search boundaries ((degree)
 gridRes                    = 1;          % Resolution (degree) of the global 3D reference system {azimuth,elevation}
 alphaRes                   = 5;          % Resolution (degree) of the 2D reference system defined for each microphone pair
 % Multiple sources parameters
-nsrce                      = 8;          % Number of sources to be detected
+nsrce                      = 6;          % Number of sources to be detected
 minAngle                   = 10;         % Minimum angle between peaks
 % Moving sources parameters
 blockDuration_sec          = [];         % Block duration in seconds (default []: one block for the whole signal)
@@ -113,11 +114,11 @@ for t = 1:T
     
     if enableWienerFiltering == 1
        %wav_frame = highpass(wav_frame, 1000 ,fs);
-       ref_time_length = 10;
-       speeds = motor_speed(fileNum, t, :); 
+       ref_time_length = 8;
+       speeds = motor_speed(fileNum, t, :);
        speeds = reshape(speeds, [1, 4]);
        %speeds = [80 80 80 80];
-       wienerRefSignal = find_ref_Signal2(speeds, fs, ref_time_length);
+       wienerRefSignal = find_ref_Signal3(speeds, fs, ref_time_length);
     end
     
     % Run the localization method

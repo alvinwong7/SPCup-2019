@@ -21,9 +21,10 @@ methodName = 'baseline2';
 %   - speech
 %   - broadband_simulated
 %   - broadband_real
-testType = 'flight_real';
+testType = 'speech';
 method = str2func(methodName);
 
+testing = 0;
 final = 1;
 
 if contains(methodName,'baseline')
@@ -33,7 +34,9 @@ else
 end
 
 addpath(genpath(fileparts(pwd)));
-if final
+if final && ~testing
+    final_submission();
+elseif ~final && ~testing
     submission();
 else
     evaluate(method,args,testType);
