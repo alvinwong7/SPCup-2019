@@ -1,10 +1,10 @@
-function DOA = baseline(wavforms,fs_wav,params, sourceData, fileNum, motor_speed)
+function [DOA test_pred] = baseline(wavforms,fs_wav,params, sourceData, fileNum, motor_speed)
 %% PATHs
 data = char(params{1});
 if contains(data, 'flight')
     J = 1;
     %T = 15;
-    T = 79;
+    T = 2;
     DATA = 'flight';
 else
     J = 1;
@@ -12,7 +12,7 @@ else
     DATA = 'static';
 end
 
-plotting = 1;
+plotting = 0;
 
 % add MBSSLocate toolbox to the current matlab session
 addpath(genpath('./MBSSLocate/'));
@@ -157,6 +157,9 @@ for t = 1:T
     end
 end
 
+
+
+
 [argmax, valmax] = viterbi2(T, sources, emission);
 pred = [];
 
@@ -178,7 +181,21 @@ if plotting == 1
         openfig("angularSpectrum" + t + ".fig");
     end
 end
+
 DOA = [DOA pred];
+
+test_pred = [];
+for i = 1:6
+    s = 1+(i-1)*16
+    e = s+15
+    if e > 79
+       e = 79;
+    end
+    [argmax, valmax] = viterbi2(e-s+1, sources(s:e,:,:), emission(s:e,:));
+    for t = 1:length(argmax)
+        test_pred = [test_pred; sources(t,argmax(t),1) sources(t,argmax(t),2)];
+    end
+end
 
 fprintf('\n')
 end
