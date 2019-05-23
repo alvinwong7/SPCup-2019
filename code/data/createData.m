@@ -1,4 +1,4 @@
-% Creates data at specific SNRs
+%% createData.m -- Creates data at specific SNRs
 
 close all; clear all; clc
 

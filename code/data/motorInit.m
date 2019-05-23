@@ -1,4 +1,4 @@
-%% motorInit.m - Function to crop the individual motor recordings to
+%% motorInit.m -- Function to crop the individual motor recordings to
 %                consist of only the motor sound, removing any silence and
 %                initial motor start up noises
 

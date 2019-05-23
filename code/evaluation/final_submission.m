@@ -1,9 +1,4 @@
-%% final_submission.m -- Master function to evaluate methods
-% Inputs:
-% - method    - Function handle for the method being tested
-% - args      - Cell array containing any arguments the method needs
-% - testType  - The type of files to test on. 
-%               Current options: 'broadband_simulated' or 'speech'
+%% final_submission.m -- final competition submission
 
 function final_submission()
 
@@ -32,11 +27,9 @@ for j = 1:2
 end
 static_azimuth = [];
 static_elevation = [];
-speech_azimuth = [];
-speech_elevation = [];
-split_azimuth = [];
-split_elevation = [];
-for j = 2:2
+flight_azimuth = [];
+flight_elevation = [];
+for j = 1:2
     switch j
         case 1
             args{1} = 'static';
@@ -54,26 +47,23 @@ for j = 2:2
         switch j
             case 1
                 load(fullfile('..','data','final_task','static_speech','static_motor_speed.mat'));
-                methodDOA = baseline(data,Fs,args,0,k, static_motor_speed);
+                methodDOA = baseline_func(data,Fs,args,0,k, static_motor_speed);
             case 2  
-                load(fullfile('..','data','final_task','flight_speech','speech_flight_motor_speed.mat'));
-                [methodDOA, splitDOA]  = baseline2(data,Fs,args,0,k, speech_flight_motor_speed);
+                load(fullfile('..','data','final_task','flight_speech','flight_motor_speed.mat'));
+                methodDOA = vtracking(data,Fs,args,0,k, speech_flight_motor_speed);
         end
-        disp(['Folder [',num2str(j),'/',num2str(3),']']);
+        disp(['Folder [',num2str(j),'/',num2str(2),']']);
         disp(['File [',num2str(k),'/',num2str(numel(files)),']']);
         switch j
             case 1
                 static_azimuth = [static_azimuth; methodDOA(:,1)];
                 static_elevation = [static_elevation; methodDOA(:,2)];
             case 2
-                speech_azimuth = [speech_azimuth; methodDOA(:,1)'];
-                speech_elevation = [speech_elevation; methodDOA(:,2)'];
-                split_azimuth = [split_azimuth; splitDOA(:,1)'];
-                split_elevation = [split_elevation; splitDOA(:,2)'];
+                flight_azimuth = [speech_azimuth; methodDOA(:,1)'];
+                flight_elevation = [speech_elevation; methodDOA(:,2)'];
         end
     end
 end
-save('SPCUP19_team_cooee_split.mat', 'split_azimuth', 'split_elevation');
 save('SPCUP19_team_cooee_static.mat', 'static_azimuth', 'static_elevation');
-save('SPCUP19_team_cooee_flight.mat', 'speech_azimuth', 'speech_elevation');
+save('SPCUP19_team_cooee_flight.mat', 'flight_azimuth', 'flight_elevation');
 end
