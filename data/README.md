@@ -1,9 +1,9 @@
 # Data
 ## Creating Test Data
-1. Download data.zip from http://tiny.cc/3hm66y
-3. Run motorInit.m
+1. Download data.zip from http://tiny.cc/3hm66y and extract it into this folder
+2. Run motorInit.m
 > It creates the folder `individual_motors_cut` which contains motor recordings
-4. Run `createData.m` with your desired settings
+3. Run `createData.m` with your desired settings
 > `createData.m` will create a new folder `new_data/`, which can have flight_real, broadband_simulated, broadband_real, and/or speech folders after data creation
 
 ## Types of Data
