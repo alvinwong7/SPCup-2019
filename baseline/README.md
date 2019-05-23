@@ -1,4 +1,4 @@
-# Dregon
+# Baseline - Dregon
 Official code repository of the SPCUP19: DREGON CHALLENGE
 
 ## Usage
