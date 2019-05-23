@@ -14,17 +14,18 @@
 clear variables;
 close all;
 
+%% Settings
 % Set method equal to the handle of the function you wish to evaluate
-methodName = 'baseline2';
+methodName = 'baseline_func';
+
 % The different testTypes are:
 %   - flight_real
 %   - speech
 %   - broadband_simulated
 %   - broadband_real
 testType = 'speech';
-method = str2func(methodName);
-submission = 0;
 
+%% Evaluation
 if contains(methodName,'baseline')
     args{1} = testType;
 else
@@ -32,8 +33,5 @@ else
 end
 
 addpath(genpath(fileparts(pwd)));
-if ~testing
-    submission;
-else
-    evaluate(method,args,testType);
-end
+method = str2func(methodName);
+evaluate(method,args,testType);

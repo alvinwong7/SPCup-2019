@@ -13,7 +13,8 @@ else
     DATA = 'static';
 end
 
-split = 0;      % splitting viterbi tracking by splitFrames amount of frames
+% Enables splitting viterbi tracking by splitFrames amount of frames
+split = 0;
 splitFrames = 15;
 plotting = 0;
 
@@ -118,12 +119,10 @@ for t = 1:T
        ref_time_length = 8;
        speeds = motor_speed(fileNum, t, :);
        speeds = reshape(speeds, [1, 4]);
-       %speeds = [80 80 80 80];
        wienerRefSignal = find_ref_Signal3(speeds, fs, ref_time_length);
     end
     
     % Run the localization method
-    % here you should write your own code
     [azEst, elEst, specGlobal, ~, ~] = ...
         MBSS_locate_spec(wav_frame,wienerRefSignal,sMBSSParam);
 
@@ -161,6 +160,7 @@ end
 DOA = [];
 
 close all
+% Run viterbi tracking
 if ~split
     [argmax, valmax] = viterbi(T, sources, emission);
     for t = 1:T
