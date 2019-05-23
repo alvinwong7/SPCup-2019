@@ -2,4 +2,4 @@
 *.fig
 *.asv
 *.mat
-!code/simulations/*.fig
+!simulations/*.fig
