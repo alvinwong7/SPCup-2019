@@ -2,9 +2,9 @@
 
 This is a code repository for the 2019 IEEE Signal Processing Cup on the topic "Search and Rescue with Drone-Embedded Sound Source Localization" by our team Shout COOEE! who achieved 2nd place in the competition.
 
-The main task of the competition is to accurately estimate the direction of a sound source (azimuth, elevation) using recordings from an 8-channel cube-shaped microphone array embedded in a flying UAV. This task is particularly challenging because of the high amount of acoustic noise produced by the UAV, resulting in negative signal-to-noise ratios (SNR). The nosie consists of harmonic components related to the propellers speed as well as stationary structural noise and sometimes wind noise due to the UAV's movements and propellers rotations. Another difficulty comes from the fact that a UAV is constantly moving, sometimes with rapid changes of direcitons, resulting in complex relative source trajectories in the microphone array's reference frame. Please refer to the pdf `SPCUP2019_syllabus` for more information about the competition.
+The main task of the competition is to accurately estimate the direction of a sound source (azimuth, elevation) using recordings from an 8-channel cube-shaped microphone array embedded in a flying UAV. This task is particularly challenging because of the high amount of acoustic noise produced by the UAV, resulting in negative signal-to-noise ratios (SNR). The nosie consists of harmonic components related to the propellers speed as well as stationary structural noise and sometimes wind noise due to the UAV's movements and propellers rotations. Another difficulty comes from the fact that a UAV is constantly moving, sometimes with rapid changes of direcitons, resulting in complex relative source trajectories in the microphone array's reference frame. Please refer to the pdf `SPCup2019_syllabus` for more information about the competition.
 
-For an in-depth understanding of our system please refer to our paper submission provided in the repository `SP_CUP_Report`.
+For an in-depth understanding of our system please refer to our paper submission provided in the repository `SPCup_Report`.
 
 ## Getting Started
 
