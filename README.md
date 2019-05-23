@@ -15,7 +15,7 @@ These instructions will get you a copy of the project up and running on your loc
 * MATLAB
  
 ### Installation
-1. Download or clone this repository to your local machine using `https://github.com/alvinwong7/sp-cup.git`
+1. Download or clone this repository to your local machine using `https://github.com/alvinwong7/SPCup-2019.git`
 2. Follow the readme instructions in `data/`
 3. Run `data/createData.m` with your desired settings to simulate data
 
@@ -37,4 +37,5 @@ This should create a graph showing the accuracy of the estimated azimuth and ele
  * Kevin Yu
  
 ## Acknowledgements
-Special thanks to Dr. Vidhyasaharan Sethu for supervising our team.
+ * Special thanks to Dr. Vidhyasaharan Sethu for supervising our team
+ * Thanks to the School of Electrical Engineering and Telecommunications at the University of New South Wales for sending our remaining members to join our presenters in the finals at IEEE ICASSP 2019
