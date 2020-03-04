@@ -12,7 +12,7 @@
 * dev_flight: contains three 4 seconds clean recordings of a static loudspeaker emitting white noise (broadband source) made while the UAV was moved around in a room with its __motors switched-off__
 * individual_motor_recordings: contains 21 8-channel .wav files at 44.1kHz corresponding to audio recordings of each of the 4 individual propellers of the UAV at different speeds (angular velocity)
 
-### Simuilated Data
+### Simulated Data
 > Simulated from `createData.m`
 * flight_real: dev_flight data with added motor noise
 * broadband_simulated: simulated static broadband source with added motor noise
